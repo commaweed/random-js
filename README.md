@@ -1050,8 +1050,8 @@ tom.move(34);
 	* works for variables declared with var and function declarations (but not function expressions)
 		-- variables are stored in execution context and initialized to undefined
 		-- function declarations are also stored in the execution context; this is why you can call the function before using it
-		-- expression:  var someFunc = function() { ... };
-		-- declaration: function 
+		-- function declaration (DOES HOIST): function() { ... } 
+		-- function expression (DOES NOT HOIST):  var someFunc = function() { ... };		
 ### function
 	* all functions have an arguments variable; calling a function without declaring the parameters can still assign values to arguments	
 		-- function blah () {}; blah("one", "two"); arguments[0] = "one", etc.
