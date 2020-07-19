@@ -1056,9 +1056,24 @@ tom.move(34);
 	* all functions have an arguments variable; calling a function without declaring the parameters can still assign values to arguments	
 		-- function blah () {}; blah("one", "two"); arguments[0] = "one", etc.
 	* each function creates a scope
-		-- lexical scoping - a function that is lexically within another function gets access to the scope of the outer function		
-	* IIFE - Immediately Invoked Function Expression
-		-- (function() { ... })(); 
+		-- lexical scoping - a function that is lexically within another function gets access to the scope of the outer function
+	* function declaration or statement
+	        -- A declared function is “saved for later use”, and will be executed later, when it is invoked (called).
+		-- function blah () {}; 
+		-- they are hoisted
+			alert(foo()); // Alerts 5. Declarations are loaded before any code can run.
+                        function foo() { return 5; }
+	* function expression
+	        -- A function expression can be stored in a variable:  var x = function (a, b) {return a * b};
+		-- After a function expression has been stored in a variable, the variable can be used as a function. 
+		-- Functions stored in variables do not need function names. 
+		-- They are always invoked (called) using the variable name. 
+		-- function name can be omitted in function expressions to create anonymous functions (but not function declarations) - see IIFE below
+		-- function expressions are not hoisted, which allows them to retain a copy of the local variables from the scope where they were defined.
+			alert(foo()); // ERROR! foo wasn't loaded yet
+			var foo = function() { return 5; }
+	* IIFE - Immediately Invoked Function Expression - runs as soon as it is defined (immediately invoked)
+		-- (function() { ... })();        
 	* functions are objects (inherit from the "global" Object as well)
 		-- it also has a prototype (i.e. __proto__)
 		-- it also has a special prototype property (called "prototype" in browser); it is related to using the "new" operator on a constructor
