@@ -1072,6 +1072,10 @@ tom.move(34);
 		-- function expressions are not hoisted, which allows them to retain a copy of the local variables from the scope where they were defined.
 			alert(foo()); // ERROR! foo wasn't loaded yet
 			var foo = function() { return 5; }
+		-- benefits:    
+			o As closures
+			o As arguments to other functions
+			o As Immediately Invoked Function Expressions (IIFE)
 	* IIFE - Immediately Invoked Function Expression - runs as soon as it is defined (immediately invoked)
 		-- (function() { ... })();        
 	* functions are objects (inherit from the "global" Object as well)
