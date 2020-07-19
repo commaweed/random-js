@@ -1412,17 +1412,17 @@ tom.move(34);
 		* checks for capturing listener first on parent nodes - but by default event listeners turn this off
 	2.  bubbling phase - up
 		* checks first on child nodes then works it's way up
-	* can change to capturing phase if you set the third parameter in addEventListener to true
-	* all events will get called while the event propagates (unless propagation is stopped)
-	* event.stopPropagation() stops the event from propogating
-		-- any other listeners for the same type of event on an ancestor will not receive event
-	* not all events propagate (see reference for each event)
-		-- click event does propagate
-		-- can log the event and "bubbles: false" means it doesn't propagate
-	* event delegation - means to have an event listener on an ancestor versus putting it on all the children
-		-- event.target - the actual element on which you clicked
-		-- event.currentTarget - the element you added the listener to
-		-- event.target.closest('li') - to get the closest ancestor (<li> element in this case) of the target
+		* can change to capturing phase if you set the third parameter in addEventListener to true
+		* all events will get called while the event propagates (unless propagation is stopped)
+		* event.stopPropagation() stops the event from propogating
+			-- any other listeners for the same type of event on an ancestor will not receive event
+		* not all events propagate (see reference for each event)
+			-- click event does propagate
+			-- can log the event and "bubbles: false" means it doesn't propagate
+		* event delegation - means to have an event listener on an ancestor versus putting it on all the children
+			-- event.target - the actual element on which you clicked
+			-- event.currentTarget - the element you added the listener to
+			-- event.target.closest('li') - to get the closest ancestor (<li> element in this case) of the target
 ### trigger events
 	* if you trigger an event programmatically, any existing event listener will be skipped
 	* el.click() - triggers click event on the element
