@@ -1085,6 +1085,23 @@ tom.move(34);
 			o it only exists with functions and is not considered a "fallback" object
 			o it is the same reference as the function's __proto__
 			o const p = new Person(); p.__proto__ === Person.prototype; // true
+### closure
+	* functions in JavaScript form closures
+	* A closure is the combination of a function bundled together (enclosed) with references to its surrounding state (the lexical environment). 
+	* gives you access to an outer function’s scope from an inner function
+		o that is, inner functions have access to the variables of outer functions
+	* they are created every time a function is created, at function creation time.	
+		function init() {
+		  var name = 'Mozilla'; // name is a local variable created by init
+		  function displayName() { // displayName() is the inner function, a closure
+			alert(name); // use variable declared in the parent function
+		  }
+		  displayName();
+		}
+		init();	
+	* Closures are useful because they let you associate data (the lexical environment) with a function that operates on that data. 
+	  This has obvious parallels to object-oriented programming, where objects allow you to associate data (the object's properties) 
+	  with one or more methods.			
 ### bind, call, and apply
 	* often used to control "this" reference
 	* call() and apply() are called immediately; bind returns a new function 
