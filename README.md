@@ -1066,12 +1066,12 @@ tom.move(34);
 			o it only exists with functions and is not considered a "fallback" object
 			o it is the same reference as the function's __proto__
 			o const p = new Person(); p.__proto__ === Person.prototype; // true
-- bind, call, and apply
+### bind, call, and apply
 	* often used to control "this" reference
 	* call() and apply() are called immediately; bind returns a new function 
 		o apply allows you to pass additional arguments as an array
 	* bind() can be used to bind parameters
-- execution call stack, web API, task/event queue, event loop
+### execution call stack, web API, task/event queue, event loop
 	* javascript engine is single-threaded; there is only one execution call stack
 	* tasks on the task/event queue will not get executed until the execution call stack is empty
 	* setTimeout, ajax, etc. are executed by other web APIs and this is why they are async
