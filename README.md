@@ -8,7 +8,7 @@ Objects
 null
 undefined
 
-### Numbers
+### 1.  Numbers
 
 * No Integers
 * Only one type: 64-bit floating point → “Double”
@@ -27,7 +27,7 @@ console.log(Math.pow(2, 3));        // 8
 console.log(Math.max(5,2));        // 5
 ```
 
-### NaN - the result of an undefined or erroneous operation
+#### NaN - the result of an undefined or erroneous operation
 
 ```javascript
 console.log(NaN === NaN);  // false, NaN is not equal to anything, including NaN
@@ -37,7 +37,7 @@ console.log(typeof NaN === 'number');  // true, NaN is a special number (i.e. 'N
 //(4 + 3 + 7 + NaN + 33 + 12) -> NaN);
 ```
 
-### String
+### 2.  String
 
 * Sequence of 0 or more 16-bit characters
 * Unicode Type: UCS-2, not quite UTF-16 (no awareness of surrogate pairs)
@@ -56,7 +56,7 @@ console.log("travis".indexOf("is") === 4);
 // other examples: match, replace, search, slice, split, substring, toLowerCase, toUpperCase
 ```
 
-### Boolean
+### 3.  Boolean
 
 * only two values, true and false
 
@@ -78,22 +78,22 @@ console.log(Boolean({"name": "travis"}) === true);
 console.log(Boolean({}) === true);
 ```
 
-### null - a value that isn’t anything
+### 4.  null - a value that isn’t anything
 
-### undefined
+### 5.  undefined
 
-The default value for variables and parameters
-The value of missing members in objects
-If you define a variable and don’t initialize it, it gets this value
+* The default value for variables and parameters
+* The value of missing members in objects
+* If you define a variable and don’t initialize it, it gets this value
 
-### Objects
+### 6.  Objects
 
-Hashtable, but no hash nature is visible (no hash codes or rehash methods)
-new Object() produces an empty container of name/value pairs
-a name can be any string, a value can be any value (except undefined)
-members can be accessed with dot notation or subscript notation
+* Hashtable, but no hash nature is visible (no hash codes or rehash methods)
+* new Object() produces an empty container of name/value pairs
+* a name can be any string, a value can be any value (except undefined)
+* members can be accessed with dot notation or subscript notation
 
-### special operator behavior
+## special operator behavior
 
 ```javascript
 // always use === which matches value AND type        (or use !==)
@@ -110,7 +110,7 @@ console.log("true" && 5 === 5);    // 1st operand is truthy, so 2nd operand is r
 console.log(null || 5 === 5);    // true, 1st operand is falsy, so use default of 5
 ```
 
-### special for statement - iterate over members of an object
+## special for statement - iterate over members of an object
 
 ```javascript
 var person = {
@@ -132,14 +132,14 @@ for (var name in person) {
 //address=null
 ```
 
-### switch statements
+## switch statements
 
 * switch expression can be number or string
 * case values can be expression or value
  
-### Try statement - similar to java (two types of throw statements)
+## Try statement - similar to java (two types of throw statements)
 
-JavaScript can produce these exception names:
+### JavaScript can produce these exception names:
 
 * Error
 * EvalError
@@ -176,7 +176,7 @@ JavaScript can produce these exception names:
       }
 ```
 
-### With Statement
+## With Statement
 
 * Intended as a short-hand for dealing with objects
 * It’s ambiguous, error-prone, and you shouldn’t use it (Douglas Crockford)
@@ -187,7 +187,7 @@ with (o) {
 }
 ```
 
-### Var Statement
+## Var Statement
 
 * Defines variables (Dynamic Type - types are determined at runtime)
 * initial values are optional
@@ -195,7 +195,7 @@ with (o) {
 * b = 2; really var b = undefined;
 * var b; means b = 2;
 
-### Scope
+## Scope
 
 * {blocks} do not have scope
 	* only functions have scope - vars defined in a function are not visible outside of the function
@@ -237,13 +237,13 @@ console.log("outside (a,c,d): (" + a + ',' + b + "," + d + ")"); // outside (a,b
 e = 5;    // declaration is hoisted, but definition occurs here
 ```
 
-### Return Statement
+## Return Statement
 
 * In JavaScript every function returns something (there is no void type)
 * thus return; actually returns undefined and no return statement does as well
 * The exception is constructors, whose default return value is the this pointer
 
-### Objects
+## Objects
 
 * Nearly everything is an object, including arrays and functions
 * Objects can contain data and methods
@@ -339,11 +339,34 @@ console.log(myOldObject); // undefined
 console.log(myNewObject); // {address: "some address", age: 45, blah: 5}
 ```
 
-### Garbage Collection
+### Douglas Crockford object inheritance method
+
+```javascript
+function object(o) {
+function F() {}
+F.prototype = o;
+return new F();
+}
+```
+
+### The (global) Object
+
+* it doesn’t have a name
+* it is the container for all global variables and all built-in objects
+* Sometimes the this pointer points to it (var global = this;)
+* on browsers, window is the global object
+* (i.e. assigned to the global object a window member whose value is the global object)
+* global variables are evil
+* use of global namespace has to be minimized
+* Any var which is not properly declared is assumed to be global by default
+* JSLint is a JS Compiler written in JavaScript which helps identify implied globals and other weaknesses
+* Build your own namespaces
+
+## Garbage Collection
 
 * There is mark and sweep garbage collection
 
-### Arrays
+## Arrays
 
 * Array inherits from Object
 * Indexes are converted to strings and used as names for retrieving values
@@ -406,7 +429,7 @@ console.log(myArray.constructor === Array);  // true
 console.log(myArray instanceof Array);  //true
 ```
 
-### Functions
+## Functions
 
 * They are first-class objects
 * They can be passed, returned, and stored just like any other value
@@ -425,7 +448,7 @@ console.log(myArray instanceof Array);  //true
 * if a function is called with too-few values, the other arguments are treated as undefined
 * functions have access to the arguments array-like object that represents a list of passed parameters (not real array)
 
-#### 5 ways to call a function
+### 5 ways to call a function
 
 1.  Function Form: myFunction(arguments);
 	a. the this pointer is set to the global object
@@ -453,7 +476,7 @@ console.log(newObject.sayHello());
 4.  Apply Form: myFunctionObject.apply(thisObject, [ arrayArguments ]);
 5.  Call Form: myFunction.call(thisObject, arguments);
 
-### Augmenting Built-in Types by adding to prototype - it will apply to all instances of that type
+## Augmenting Built-in Types by adding to prototype - it will apply to all instances of that type
 
 * Object.prototype
 * Array.prototype
@@ -474,7 +497,7 @@ console.log(someString.addFavDay()); // abcd (Friday!!!)
 console.log("xyz".addFavDay());  // xyz (Friday!!!)
 ```
 
-### typeof
+## typeof
 
 | TYPE | typeof |
 | ---- | ---- |
@@ -495,35 +518,12 @@ console.log("xyz".addFavDay());  // xyz (Friday!!!)
 * It is one of the most misused features of the language.
 	* It calls new Function(parameters, body) and that is what gives you access to compiler
 
-###Douglas Crockford object inheritance method
-
-```javascript
-function object(o) {
-function F() {}
-F.prototype = o;
-return new F();
-}
-```
-
-### The (global) Object
-
-* it doesn’t have a name
-* it is the container for all global variables and all built-in objects
-* Sometimes the this pointer points to it (var global = this;)
-* on browsers, window is the global object
-* (i.e. assigned to the global object a window member whose value is the global object)
-* global variables are evil
-* use of global namespace has to be minimized
-* Any var which is not properly declared is assumed to be global by default
-* JSLint is a JS Compiler written in JavaScript which helps identify implied globals and other weaknesses
-* Build your own namespaces
-
-### Threads
+## Threads
 
 * Threads are evil - language definition is neutral on threads
 * most application environments (like browsers) do not provide it
 
-### Prototypal Inheritance
+## Prototypal Inheritance
 
 * class-free
 * Objects inherit from objects
@@ -553,7 +553,7 @@ console.log(child.two());         // 2
 console.log(child.three());     // 3
 ```
 
-### Example of a memoize function
+## Example of a memoize function
 
 ```javascript
 function memoizer(lookupTable, formula) {
@@ -583,7 +583,7 @@ return currentNumber * recursiveFunction(currentNumber - 1); //formula for facto
 console.log(factorial(10)); // 3628800
 ```
 
-### singleton example
+## singleton example
 
 ```javascript
 var singleton = function() {
@@ -656,9 +656,9 @@ var anotherFunction = function(a, b, c) {
 anotherFunction(1, 2, 3);
 ```
 
-### JavaCcript Object Creation Patterns (4 ways)
+## JavaCcript Object Creation Patterns (4 ways)
 
-1. Constructor Pattern​
+### 1. Constructor Pattern​
 
 ```javascript
 var peopleConstructor = function(name, age, state) {
@@ -681,7 +681,7 @@ travis.display();
 john.display();
 ```
     ​
-2. factory pattern
+### 2. factory pattern
 
 ```javascript
 // option 1: use property setters on object
@@ -747,7 +747,7 @@ travis.display();
 john.display();
 ```
 
-3. prototype pattern
+### 3. prototype pattern
 
 ```javascript
 // Object has prototype and instances will share things created on it
@@ -768,7 +768,7 @@ travis.display();
 john.display();
 ```
 
-4. dynamic prototype pattern
+### 4. dynamic prototype pattern
 
 ```javascript
 var peopleDynamicProto = function(name, age, state) {
@@ -789,7 +789,7 @@ var travis = new peopleProto('travis', 45, 'MD');
 var john = new peopleProto('john', 22, 'CA');
 ```
 
-### How Typescript transpiles it to an object (create class in Typescript)
+## How Typescript transpiles it to an object (create class in Typescript)
 
 ```javascript
 // avoid global variables by defining class in a namespace
@@ -853,7 +853,7 @@ console.log(travis.getGreeting);
 console.log(whateverMod.Person.count);
 ```
 
-### Example Inheritance using Typescript transpiling
+## Example Inheritance using Typescript transpiling
 
 ```javascript
 // The lookup time for properties that are high up on the prototype chain can have a negative
