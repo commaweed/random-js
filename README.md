@@ -118,6 +118,13 @@ console.log("travis".indexOf("is") === 4);
 // other examples: match, replace, search, slice, split, substring, toLowerCase, toUpperCase
 ```
 
+#### (ES6+) string expressions (`${varName}`) 
+
+* the variables must be expressions (not code)
+* also known as string interpolation
+* also called template literals
+* supports multi-line
+	
 ### 3.  Boolean
 
 * only two values, true and false
@@ -238,6 +245,205 @@ console.log(myArray);
 console.log(myArray.constructor === Array);  // true
 console.log(myArray instanceof Array);  //true
 ```
+
+* iteratable:  objects that implement "iterable" protocol and have an @@iterator method (i.e. Symbol.iterator); basically can do "for-of" on it
+	* NodeList, String, Map, Set
+* Array-Like Object:  objects that have a length property and use indexes to access items
+	* NodeList, String
+* creating
+
+```javascript
+const arr = [ 1, 2 ];
+const arr = Array.of(1);
+const arr = Array.from(nodeList); // convert array-like to array (const arr = Array.from(someString); makes array with each character
+const arr = new Array(5); // empty array with 5 elements
+const arr = new Array(5, 2); // two elements 5 and 2 (can also do const arr = Array(5, 2);
+```
+
+* push(), pop(), shift(), unshift()
+	* adds or removes a single element
+* splice()
+	* only works with real arrays
+	* can help insert or remove elements (in the middle for example)
+	* splice(0) removes all elements
+	* works with negative index and will go to end of array and look from the right
+	
+```javascript
+// returns the elements that were removed as an array
+var removed = myFish.splice(startIndex, numOfItemsToDelete);
+
+// inserts "someNewElement" at index 0
+hobbies.splice(startIndex, numToDelete, ...itemsToInsert); hobbies.splice(0, 0, 'someNewElement"); 
+```	
+	
+* slice()
+	* returns a shallow copy of a portion of an array into a new array object selected from begin to end (end not included). The original array will not be modified.
+	* a way to copy an array (arr.slice()) : good way to get a range of an array
+	* supports negative indices for both parameters
+		* this means it can go from the right-side
+	
+```javascript	
+var arr = slice(startIndex, endIndexNonInclusive);	
+```
+
+* concat()
+	* used to merge two or more arrays. This method does not change the existing arrays, but instead returns a new array.
+	* const arr = array1.concat(array2);
+* indexOf() and lastIndexOf()
+* const objectFound = find((object, index, array) => {}) // or findIndex()
+* includes() returns boolean (same as indexOf() === -1) 
+	* good for primitive values
+* forEach((object, index, array) => {})
+* sort((a, b) => a > b ? 1 : a < b ? -1 : 0) 
+* array.reverse()
+* map(), reduce((prevValue, curValue, curIndex, prices) => {}, initialValue), filter()
+* var string = someArray.join(separator); // default is comma
+* spread operator: const copiedNameFragments = [...nameFragements];
+* using destructuring to create an array: const [ value0, value1, ...otherValues ] = array;
+
+#### (ES6+) Arrays class 
+
+* Arrays.from() to convert a DOM NodeList to an array for example 
+
+### (ES6+) Maps 
+
+* key/value
+* order is guaranteed
+* no duplicate keys
+* key-based access
+
+```javascript
+const myMap = new Map();
+```
+	
+### (ES6+) Sets
+
+* order is not guaranteed (no indices) and duplicates not allowed
+
+```javascript
+const ids = new Set([1,2,3]); // creation
+
+set.has(value); // is it in the set
+
+// add or remove
+set.add(value);
+set.delete(value);
+
+// returns iterable, but each entry is an array (like a key/value but they are the same)
+set.entries();
+```
+
+## Operators
+
+### special operator behavior
+
+```javascript
+// always use === which matches value AND type        (or use !==)
+console.log(5 == "5"); // true
+console.log(5 === "5"); // false
+
+// urnary + prefix works like Number("string")
+console.log(typeof +"111" === 'number'); // true
+
+// The guard operator (&&): if 1st operand is truthy, then result = 2nd operand, else result = 1st operand
+console.log("true" && 5 === 5);    // 1st operand is truthy, so 2nd operand is result -> true
+
+// the default operator (||): if 1st operand is truthy, they result = 1st operand, else result = 2nd operand
+console.log(null || 5 === 5);    // true, 1st operand is falsy, so use default of 5
+```
+
+### typeof
+
+| TYPE | typeof |
+| ---- | ---- |
+| object | 'object' |
+| function | 'function' |
+| array | 'object' |
+| number | 'number' |
+| string | 'string' |
+| boolean | 'boolean' |
+| null | 'object' |
+| undefined | 'undefined' |
+| eval | | 
+
+* powerful and dangerous - recommend you don’t use it - for Json use JSON.parse(text[, reviver])
+* gives you access to the javascript compiler and interpretter
+* The eval(string) function compiles and executes the string in the context of the eval function and returns the result.
+	* it is what the browser uses to convert strings into actions
+* It is one of the most misused features of the language.
+	* It calls new Function(parameters, body) and that is what gives you access to compiler
+
+### (ES6+) arrow functions
+
+* treat **this** as lexical scope 
+	* unlike regular functions, arrow functions don't get their own **this** reference
+	* their **this** comes from the outer **this**
+	
+### (ES6+) destructuring 
+
+* can be used to create objects or arrays
+
+### (ES6+) spread operator
+
+```javascript
+// can be used with array
+const copiedNameFragments = [...nameFragements];
+
+// can be used with object
+const person2 = { ...person, someVar: "override if exists" };
+```
+	
+### (ES6+) rest operator
+
+```javascript
+function(one, two, ...three) {} // three gets treated like an array
+```
+	
+## Scope
+
+* {blocks} do not have scope
+	* only functions have scope - vars defined in a function are not visible outside of the function
+	* if you create a variable ANYWHERE inside a function, it is visible everywhere in the function
+	* if you create a variable twice inside a function, it only gets created once
+	* javascript has implied globals - if you create a variable and forget to declare it, it assumes global
+* in strict mode, references to undeclared variables is an error
+
+```javascript
+// it's as-if these statements happen here: (don't think order matters - they are all declared in same memory space)
+// var a = undefined;  -> as global
+// var b = undefined;  -> as global
+// entire function test, variables are inspected and function is linked to global object
+// var d = undefined; -> as global (but doesn't happen until test is called)
+// var e = undefined; -> as global
+
+var a = 1;  // definition: hoisted; declaration: assignment happens here
+b = 2;         // definition: hoisted; declaration: assignment happens here
+
+console.log("before function call (a,b): (" + a + ',' + b + ")"); // before function call (a,b): (1,2)
+
+test();     // execute function -> inside (a,b,c): (1,2,undefined)
+
+// definition of function:  hoisted
+
+function test() {
+// it's as-if the following statements happen here
+// var c = undefined; -> as local to test function
+
+// d is not visible here
+console.log("inside (a,b,c): (" + a + ',' + b + ',' + c + ")");
+var c = 3;    // scope in function only (assignment happens here)
+d = 4;    // this variable is implied global because it was not declared with var keyword
+}
+
+// c and d are out of scope and e is not visible here
+console.log("outside (a,c,d): (" + a + ',' + b + "," + d + ")"); // outside (a,b,c,d,e): (1,2,4)
+
+e = 5;    // declaration is hoisted, but definition occurs here
+```
+
+### (ES6+) let and const 
+
+* allows for block scoping
 
 ## Functions
 
@@ -361,7 +567,7 @@ console.log(newObject.sayHello());
 4.  Apply Form: myFunctionObject.apply(thisObject, [ arrayArguments ]);
 5.  Call Form: myFunction.call(thisObject, arguments);
 
-### ** this ** pointer with functions
+### **this** pointer with functions
 
 * in general, the "this" refers to whatever is responsible for executing the function (but there are exceptions)
 * in a regular function call, it points to the global object (window in the browser)
@@ -396,7 +602,7 @@ console.log(newObject.sayHello());
 			
 ### bind, call, and apply (special internal functions)
 
-* often used to control ** this ** reference
+* often used to control **this** reference
 * call()
 	* called immediately	
 * apply() 
@@ -708,6 +914,7 @@ var newObject = Object.create(
 ### object creation in ES6+
 
 * classes - they are basically syntactic sugar and mostly work the same as in javascript
+	* methods will automatically be assigned to the prototype of the object they are added to
 * supports inheritance; can only extend one class; super must be first line in constructor 
 * constructor is called constructor
 * instanceof operator exists and can be used with DOM elements as well
@@ -902,89 +1109,7 @@ console.log(child.one());       // 1
 console.log(child.two());       // 2
 console.log(child.three());     // 3
 ```
-
-## Operators
-
-### special operator behavior
-
-```javascript
-// always use === which matches value AND type        (or use !==)
-console.log(5 == "5"); // true
-console.log(5 === "5"); // false
-
-// urnary + prefix works like Number("string")
-console.log(typeof +"111" === 'number'); // true
-
-// The guard operator (&&): if 1st operand is truthy, then result = 2nd operand, else result = 1st operand
-console.log("true" && 5 === 5);    // 1st operand is truthy, so 2nd operand is result -> true
-
-// the default operator (||): if 1st operand is truthy, they result = 1st operand, else result = 2nd operand
-console.log(null || 5 === 5);    // true, 1st operand is falsy, so use default of 5
-```
-
-## typeof
-
-| TYPE | typeof |
-| ---- | ---- |
-| object | ‘object |
-| function | ‘function’ |
-| array | ‘object’ |
-| number | ‘number’ |
-| string | ‘string’ |
-| boolean | ‘boolean’ |
-| null | ‘object’ |
-| undefined | ‘undefined’ |
-| eval | | 
-
-* powerful and dangerous - recommend you don’t use it - for Json use JSON.parse(text[, reviver])
-* gives you access to the javascript compiler and interpretter
-* The eval(string) function compiles and executes the string in the context of the eval function and returns the result.
-	* it is what the browser uses to convert strings into actions
-* It is one of the most misused features of the language.
-	* It calls new Function(parameters, body) and that is what gives you access to compiler
-
-## Scope
-
-* {blocks} do not have scope
-	* only functions have scope - vars defined in a function are not visible outside of the function
-	* if you create a variable ANYWHERE inside a function, it is visible everywhere in the function
-	* if you create a variable twice inside a function, it only gets created once
-	* javascript has implied globals - if you create a variable and forget to declare it, it assumes global
-* in strict mode, references to undeclared variables is an error
-
-```javascript
-// it's as-if these statements happen here: (don't think order matters - they are all declared in same memory space)
-// var a = undefined;  -> as global
-// var b = undefined;  -> as global
-// entire function test, variables are inspected and function is linked to global object
-// var d = undefined; -> as global (but doesn't happen until test is called)
-// var e = undefined; -> as global
-
-var a = 1;  // definition: hoisted; declaration: assignment happens here
-b = 2;         // definition: hoisted; declaration: assignment happens here
-
-console.log("before function call (a,b): (" + a + ',' + b + ")"); // before function call (a,b): (1,2)
-
-test();     // execute function -> inside (a,b,c): (1,2,undefined)
-
-// definition of function:  hoisted
-
-function test() {
-// it's as-if the following statements happen here
-// var c = undefined; -> as local to test function
-
-// d is not visible here
-console.log("inside (a,b,c): (" + a + ',' + b + ',' + c + ")");
-var c = 3;    // scope in function only (assignment happens here)
-d = 4;    // this variable is implied global because it was not declared with var keyword
-}
-
-// c and d are out of scope and e is not visible here
-console.log("outside (a,c,d): (" + a + ',' + b + "," + d + ")"); // outside (a,b,c,d,e): (1,2,4)
-
-e = 5;    // declaration is hoisted, but definition occurs here
-```
-
+	
 ## Statements
 
 ### special for statement - iterate over members of an object
@@ -1007,6 +1132,12 @@ for (var name in person) {
 //name=travis
 //age=45
 //address=null
+```
+
+### (ES6+) for of statement
+
+```javascript
+for (const varName of someArray) { }
 ```
 
 ### If statements
@@ -1075,6 +1206,13 @@ for (var name in person) {
       }
 ```
 
+#### Error object
+
+* new Error('some message');
+* throw new Error('some message');
+* when logged, also gives you a stacktrace
+* since it is an object, you can add stuff to it
+
 ### With Statement
 
 * Intended as a short-hand for dealing with objects
@@ -1101,6 +1239,11 @@ with (o) {
 * The exception is constructors, whose default return value is the this pointer
 
 ## Other Javascript Concepts
+
+### "use strict" 
+
+* enforces several javascript rules, such as ensuring all statements end in semicolon, etc.
+* it is a single line statement that should be the first executed line
 
 ### Garbage Collection
 
@@ -1347,506 +1490,102 @@ sam.move();
 tom.move(34);
 ```
 
+# Asynchrounous calls
 
+* asynchronous JavaScript 
 
+## setTimeout() 
 
+* called once
 
-
-
-
-### arrays 
-	* iteratable:  objects that implement "iterable" protocol and have an @@iterator method (i.e. Symbol.iterator); basically can do "for-of" on it
-		o NodeList, String, Map, Set
-	* Array-Like Object:  objects that have a length property and use indexes to access items
-		o NodeList, String
-	* creating
-		o const arr = [ 1, 2 ];
-		o const arr = Array.of(1);
-		o const arr = Array.from(nodeList); // convert array-like to array (const arr = Array.from(someString); makes array with each character
-		o const arr = new Array(5); // empty array with 5 elements
-		o const arr = new Array(5, 2); // two elements 5 and 2 (can also do const arr = Array(5, 2);
-	* push(), pop(), shift(), unshift()
-	* splice()
-		o only works with real arrays
-		o can help insert or remove elements (in the middle for example)
-		o splice(0) removes all elements
-		o var removed = myFish.splice(startIndex, numOfItemsToDelete);
-		o hobbies.splice(startIndex, numToDelete, ...itemsToInsert); hobbies.splice(0, 0, 'someNewElement"); // inserts "someNewElement" at index 0
-		o works with negative index and will go to end of array and look from the right
-	* slice()
-		o returns a shallow copy of a portion of an array into a new array object selected from begin to end (end not included). The original array will not be modified.
-		o a way to copy an array (arr.slice()) : good way to get a range of an array
-		o var arr = slice(startIndex, endIndexNonInclusive);
-		o does support negatives index for both and this means it goes from the right
-	* concat()
-		o used to merge two or more arrays. This method does not change the existing arrays, but instead returns a new array.
-		o const arr = array1.concat(array2);
-	* indexOf() and lastIndexOf()
-	* const objectFound = find((object, index, array) => {}) // or findIndex()
-	* includes() returns boolean (same as indexOf() === -1) 
-		o good for primitive values
-	* forEach((object, index, array) => {})
-	* sort((a, b) => a > b ? 1 : a < b ? -1 : 0) 
-	* array.reverse()
-	* map(), reduce((prevValue, curValue, curIndex, prices) => {}, initialValue), filter()
-	* var string = someArray.join(separator); // default is comma
-	* spread operator: const copiedNameFragments = [...nameFragements];
-	* destructuring: const [ value0, value1, ...otherValues ] = array;
-### Maps
-	* key/value
-	* order is guaranteed, no duplicate keys, key-based access
-### Sets
-	* order is not guaranteed (no indices) and duplicates not allowed
-	* const ids = new Set([1,2,3]);
-	* set.has(value), set.add(value), set.entries() // returns iterable, but each entry is an array (like a key/value but they are the same)
-	* set.delete(value)
-### "use strict" 
-	* enforces several javascript rules, such as ensuring all statements end in semicolon, etc.
-### can use defer and async to load scripts in HTML (done in <HEAD> section)
-	* defer 
-		-- tells the browser to download script right away and not block HTML parsing; execution of the script will happen after it is downloaded and after HTML parsing finishes
-		-- order is guaranteed
-	* async 
-		-- tells the browser to download script asap and execute immediately; it does not block the HTML parsing, but still will execute before it finishes
-		-- order is not guaranteed
-### Error object
-	* new Error('some message');
-	* throw new Error('some message');
-	* when logged, also gives you a stacktrace
-	* since it is an object, you can add stuff to it
+```javascript
+const id = setTimeout(callback, timeInMillis);
+```
+ 
+* executed by web API call - that's why it is async (javascript engine is single threaded)
+* callback goes onto task queue when time has elapsed 
+* callback won't be called until execution stack is empty (thus it may have to wait a longer than timeInMillis
+* to stop: clearTimeout(id);
 	
-## ES6+
+## setInterval() 
 
-### let and const 
-	* block scoping
-### arrow functions
-	* treat this as lexical scope 
-		-- arrow functions don't get their own this reference
-		-- their this comes from the outer this
-### destructuring
-### spread operator
-	* can be used with array
-		-- const copiedNameFragments = [...nameFragements];
-	* can be used with object
-		-- const person2 = { ...person, someVar: "override if exists" };
-### rest operator
-	function(one, two, ...three) {} // three gets treated like an array
-### function default parameters
-### Map
-	* const myMap = new Map();
-### classes and subclasses
-### string expressions (`${varName}`) 
-	* the variables must be expressions (not code)
-	* also known as string interpolation
-	* also called template literals
-	* supports multi-line
-### Arrays class 
-	* Arrays.from() to convert a NodeList to an array for example 
-### for of
-	for (const varName of someArray) { }
-### promises
-	* you can use a shim to polyfill (e.g. es6shim)
-### async / await
-### fetch / axios (vendor ajax api)
-### modules
-### classes, inheritance, static, private variables, etc.
-	* classes are syntactic suger; methods will be assign to the prototype of the object they are added to
+* call periodically: 
 
-## DOM manipulation
+```javascript
+const id = setInterval(callback, timeInMillis, []);
+```
+* to stop: clearInterval(id); // clearTimeout(id) works too, but use this one
 
-### Element Node versus Text Node
-	* .children only returns element nodes (HTMLCollection)
-		-- this is usually the most popular
-	* .childNodes returns NodeList which will include element and text nodes (all nodes)
-	* text nodes	
-		- "data" property is the value of the text node
-		- text nodes are also used for the whitespace that is between elements (e.g. <HTML>\n<BODY>)
-		- cannot have child nodes; they can only hold text
-	* parentNode and parentElement are almost always the same, with the exception of the document.documentElement
-		- document.documentElement.parentElement = null
-		- document.documentElement.parentNode = #document
-### document
-	* document.body selects the <body> element node
-	* document.head selects the <HEAD> element node
-	* document.documentElement selects the <html> element node
-### you can call querySelector() and querySelectorAll() on any element (and not just document)
-	* querySelector():  returns null if no element is found 
-	* querySelectorAll(): returns empty NodeList if no element is found
-		o takes a snapshot of the dom; additions to real dom are not reflected on snapshot (but reference changes are seen; just not addition/removal of nodes)
-		o more flexible than the older getElementsByTagName, but it is a snapshot
-### document.getElementById()
-	o live (not a snapshot)
-	o returns null if no match
-### document.getElementByClassName("someCssClassName")
-	* returns an empty HTMLCollection if no match
-### document.getElementsByTagName("p")
-	* returns an empty HTMLCollection if no match 
-		o unlike querySelectorAll(), any addition/removal of node will be seen because it is a live list
-### document.querySelectorAll() returns a NodeList which looks like an array but isn't
-	* can use var newArray = Array.prototype.slice.call(myNodeList); // ES5 way
-	* Arrays.from() // ES6 way
-### traversal
-	* descendant traversal
-		-- querySelector() and querySelectorAll() can sometimes be slower than using direct traversal
-		-- children (HTMLCollection) or childNodes (NodeList)
-		-- firstChild versus firstElementChild (the first one can return text nodes)	
-		-- lastChild and lastElementChild
-	* ancestor traversal
-		-- parentNode and parentElement
-		-- closest('cssSelector') 
-			o ancestor method that works like querySelector() in that it takes a CSS selector
-			o it will pick the nearest ancestor
-			o it's css selector query includes the element itself if it matches
-	* sibling traversal
-		-- previousSibling and previousElementSibling
-		-- nextSibling and nextElementSibling
-### styling dom elements
-	* style property 
-		-- assigned on the style property will override any other style assigned by a class, etc.
-		-- they are based upon the CSS properties but are adjusted because they don't allow hyphens, for example (e.g. style.backgroundColor)
-	* className property 
-		-- string
-		-- can set to empty string to clear it (className = '')
-		-- can set multivalues as such: className = 'classNameOne classNameTwo'
-	* classList property
-		-- object
-		-- easier to manage if you have multiple classes
-		-- methods	
-			element.classList.contains()
-			element.classList.add()
-			element.classList.remove()
-			element.classList.replace()
-			element.classList.toggle() // removes if exists or adds if not
-### creating and inserting elements
-	* HTML string
-		-- innerHTML - add (render) HTML string of an existing element
-			o always replaces the current content, including descendants
-			o only use if you want to replace all; don't use to add to
-		-- insertAdjacentHTML() - add (render) HTML string in a specific position to an existing element
-			o 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
-			o use this one to add to existing HTML
-			o does not give you direct access to the newly added HTML
-		-- textContent
-			o gives all the text content of all the child elements 
-			o you can set it, but it will also remove all the elements in it
-			o only use this if text is the content you want to change on your node
-	* createElement('tagName')
-		-- creates a new element node; e.g. var newElement = document.createElement('li', {is: ...});
-	* adding / inserting / replacing / appending nodes
-		-- appendChild(node) / append(node) - append new DOM element/node
-			o append can also take a string and will append it as a text node; append is not supported by IE and by older browsers
-		-- prepend(), before(), after(), insertBefore() - insert new DOM element/node in specific position
-			o before and after have issues on safari
-		-- replaceChild(), replaceWith() - replace existing element/node with new one
-		-- insertAdjacentElement() - add (render) element node in a specific position to an existing element
-			o 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
-			o safer than before() and after() because it is supported in most browsers
-### removing nodes
-	* node.remove() - renders the removal of the element from the DOM
-		o IE doesn't support it
-	* node.parentELement.removeChild(node)
-		o supported by all browsers
-### clone nodes
-	* element.cloneNode(boolean deepClone) - returns a brand new node
-		o deepClone true means all child descendants are cloned (all children)
-### moving nodes
-	* if you get a reference to an existing node and append it somewhere else, it will move the node (not add another)
-		const sourceEl = document.getElementById(id);
-		const destinationEl = document.querySelector(someCssSelector);
-		destinationEl.append(sourceEl); // will move the existing element as child of destinationEl
-### data-* attributes (on HTML elements)
-	* it is a way to add data to your HTML elements that can be accessed from javascript 
-	* it is stored on the DOM node in a Map called dataset (actual type is DOMStringMap)
-### element box dimensions
-	* element.getBoundingClientRect() // returns DOMRect
-	* position is always top left corner (x = left, y = top) to (right, bottom) (y=0 top to y=#### bottom), (x=0 left to x=#### right)
-	* el.offsetTop, el.offsetLeft - always relative to your document start, NOT the viewport (i.e. it does not change when scrolling)
-	* el.clientTop, el.clientLeft - give you the inner positioning (how far it is from top-left to content of the box)
-		o content of box implies box without borders or potential scroll bars
-	* el.offsetWidth, el.offsetHeight - height and width of the box, including all borders and scrollbars
-	* el.clientWidth, el.clientHeight - inner width and height without borders and scrollbars
-	* el.scrollHeight - gives entire height of the content, including the non-visible parts
-	* el.scrollTop - tells you how much you scolled content in the box
-	* to assign new positions to an element, you need to use CSS (el.style.position = 'absolute'; // to position it relative to the screen)
-		--  el.style.left = x + 'px'; el.style.top = y + 'px';
-### document width and height
-	* window.innerWidth and window.innerHeight
-		-- problem is if you have a visible scrollbar, it includes it 
-	* (better way) document.documentElement.clientWidth and document.documentElement.clientHeight (these deduct any visible scroll bars)
-### scrolling
-	* to scroll to absolute: el.scrollTo(x, y) // x,y is how much you want to scroll right and down in absolute values (in pixels)
-	* to scroll to relative: el.scrollBy(x, y) // x,y is how much you want to scroll right and down from where you are
-	* scrollTo() and scrollBy() also take behavior when an object is passed in (e.g. scrollBy({top: 50, behavior: 'smooth' }))
-	* to make an element visible: el.scrollIntoView({ behavior: 'smooth' }); // jumps (no animation) when no object is provided
-### template tags
-	* <template> is an HTML tag that is not rendered on it's own
-		-- it's content by default is not rendered, but it is part of the DOM
-		-- it can have have an id attributes
-		-- of HTML that you want rendered is within the template, to render content:		
-			const someTemplate = document.getElementById('someTemplateId');
-			const bodyOfTemplate = document.importNode(someTemplate.content, true); // creates a new node with a deep import 
-			hostEl.append(bodyOfTemplate);
-### load script dynamically
-	* example doing it by hand
-		const someScript = document.createElement('script');
-		someScript.textContent = 'alert("Hi there")';
-		document.head.append(someScript);
-	* file example
-		const someScript = document.createElement('script');
-		someScript.src = 'relative/to/html_file/someScript.js';
-		someScript.defer = 'true;
-		document.head.append(someScript);
+## (ES5) AJAX HTTP requests
+
+* dummy online server for testing: JSONPlaceHolder
+
+```javascript
+const xhr = new XMLHttpRequest();
+```
+
+* supported by all browsers
+* xhr.open('GET', 'https://jsonplaceholder.typicode/posts');
+	* no network activity starts here
+	* 1st arg is the HttpMethod
+	* 2nd arg is the URL
+* xhr.responseType = 'json'; // like an ACCEPT header
+* xhr.send();
+	* sends the request to the server, but does not receive the response here (asynchronously)
+	* need a listener callback to handle the response
+* callback listener 1:  xhr.onload = function() { console.log(xhr.response); }
+	* widely supported by all browsers
+* callback listener 2:  xhr.addEventListener(() => {});
+	* some browsers don't support it (IE and old versions)
+* xhr.response 
+	* gives you JSON data and is not javascript you can work with it
+	* JSON.parse(xhr.response) -> converts JSON to javascript
+* xhr.onerror = function() { console.log(xhr.response); console.log(xhr.status); }
+	* only gets called if we have a network error 
+	* if request succeeds and you get any server response (error or not), it will go into onload
+	* so you'll want to check your in your onload handler
 	
-## Events
+```javascript	
+if (xhr.status >= 200 && xhr.status < 300) { resolve(xx); } else { reject(xx); }
+```
 
-### adding event listeners
-	* can add onXxxx attribute to the Html element
-		-- this is not the preferred way
-	* button.addEventListener('click', () => {});
-	* add same property that HTML node uses:  button.onClick  = function() {}
-		-- doesn't support assigning more than one function this way
-### removing event listeners	
-	* clone / replaceWith
-		static clearEventListeners(element) {
-			// doing it this way will drop all event listeners (they will be garbage collected)
-			const clone = element.cloneNode(true);
-			element.replaceWith(clone);
-			return clone;
-		}	
-	* el.removeEventListener('eventName', sameFunctionHandler)
-### to get event listeners in chrome
-	getEventListener($0)
-### older browsers use event.which versus event.keyCode
-### event delegation
-	* add a single event handler to a parent element in order to avoid having to add event handlers to multiple child elements
-	* the event will propagate up
-	* in the handler we get event.target and that tells us where the event actually happened
-	* can also do event.target.tagName to get the element tag (e.g. LI, UL, BUTTON, etc.)
-### you can assign multiple event listeners to the same object and event the same event type
-	* if you add the same event handler function, nothing extra gets added; but new functions will get added
-	* be careful when adding multiple event handlers with different functions; if you intended to replace the previous one, you'll need to remove it
-		Class DomHelper {
-			static clearEventListeners(element) {
-				// doing it this way will drop all event listeners (they will be garbage collected)
-				const clone = element.cloneNode(true);
-				element.replaceWith(cloneElement);
-				return clonedElement;
-			}
+* JSON request / response
+	* can only store data, no functions or methods
+	* fields/properties have to be wrapped with double quotes
+	* use JSON.stringify(javascriptObject) to convert a javascript object to JSON 
+
+
+* headers:
+	* can call it multiple times to add additional headers
+
+```javascript
+xhr.setRequestHeader('Content-Type', 'application/json'); // once added, it cannot be removed
+```	
+
+* sample use
+
+```javascript	
+function sendHttpRequest(method, url, requestPayload) {
+	const promise = new Promise((resolve, reject) => {
+		const xhr = new XMLHttpRequest();
+		xhr.open(method, url);
+		xhr.responseType = 'json';
+		xhr.onLoad = function() {
+			resolve(xhr.response);
 		}
-### mouse events, drag events, other events
-	* they all have event.target
-	* mouse enter, etc.: relatedTarget will tell you the element it was on before entering for example
-### to disable an event target
-	* event.target.disabled = true; // you'll see disabled on the HTML element
-### event.preventDefault()
-	* prevents the default behavior 
-		-- example a submit button in a form		
-### DOM Events have two phases (event propagation)
-	1.  capturing phase - down
-		* checks for capturing listener first on parent nodes - but by default event listeners turn this off
-	2.  bubbling phase - up
-		* checks first on child nodes then works it's way up
-		* can change to capturing phase if you set the third parameter in addEventListener to true
-		* all events will get called while the event propagates (unless propagation is stopped)
-		* event.stopPropagation() stops the event from propogating
-			-- any other listeners for the same type of event on an ancestor will not receive event
-		* not all events propagate (see reference for each event)
-			-- click event does propagate
-			-- can log the event and "bubbles: false" means it doesn't propagate
-		* event delegation - means to have an event listener on an ancestor versus putting it on all the children
-			-- event.target - the actual element on which you clicked
-			-- event.currentTarget - the element you added the listener to
-			-- event.target.closest('li') - to get the closest ancestor (<li> element in this case) of the target
-### trigger events
-	* if you trigger an event programmatically, any existing event listener will be skipped
-	* el.click() - triggers click event on the element
-### how to add drag and drop capability
-	1.  required: mark element as "draggable"
-		* on the element in the HTML, add attribute draggable="true"
-	2.  required: listen to "dragstart" event - describe operation and append data
-		* el.addEventListener('dragstart', event => { event.dataTransfer.setData('text/plain', this.id); event.dataTransfer.effectAllowed = 'move'; });
-		* can append id in the event handler so that we know what to do with it when it is dropped
-	3.  required: mark an area where it can be dropped by adding an event listener (i.e. drop zone)
-		* accept drop via "dragenter" and "dragover" Events 
-		* in the event listeners, you need to call event.preventDefault()
-		* el.addEventListener('dragenter', event => { 
-			 if (event.dataTransfer.types[0] === 'text/plain') {
-				el.parentElement.classList.add('droppable'); // this is a homegrown CSS class that provide UI visibility
-				event.preventDefault(); 
-			 }	 
-		  });
-		  el.addEventListener('dragover', event => { 
-			 if (event.dataTransfer.types[0] === 'text/plain') {
-				event.preventDefault(); 
-			 }
-		  });
-		* you cannot read / get the data here
-	4.  optional: listen to "dragleave" Event - e.g. update styles
-		  el.addEventListener('dragleave', event => { 
-			 if (event.relatedTarget.closest('someCSSselectorForParent') !== el) { // relatedTarget points at the element we moved to
-				el.parentElement.classList.remove('droppable');
-			 }		   
-		  });	
-	5.  required: listen to "drop" Event, then update data / UI
-		* we can now extract data we added in the dataTransfer 'dragstart' event
-		  el.addEventListener('drop', event => { 
-			 const dataId = event.dataTransfer.getData('text/plain');	
-			 // if find your element by id here, don't add it (return)
-			 // add to this area
-			 // remove from old area 
-			 el.parentElement.classList.remove('droppable');
-			 event.preventDefault(); // not required
-		  });
-	6.  optional: listen to a "dragend" Event, then update data / UI
-		* do this in same place you added the 'dragstart' event listener
-		* el.addEventListener('dragend', event => { 
-			 // do something if you want	
-			 // you can check the event.dataTransfer.dropAffect to see if it is "none" which means it didn't work
-		  });
-		
-### Async stuff
-
-### call once: const id = setTimeout(callback, timeInMillis); 
-	* executed by web API call - that's why it is async (javascript engine is single threaded)
-	* callback goes onto task queue when time has elapsed 
-	* callback won't be called until execution stack is empty (thus it may have to wait a longer than timeInMillis
-	* to stop: clearTimeout(id);
-### call periodically: const id = setInterval(callback, timeInMillis, []);
-	* to stop: clearInterval(id); // clearTimeout(id) works too, but use this one
-### const promise = new Promise((resolve, reject) => { resolve(data) or reject(error) });
-	* promise.then((success) => { return anotherPromise; }, error => console.log(error)).then((success) => {}).catch((error) => {}).finally(() => {});
-	* returning something from then() will auto-wrap it in a promise (return a string that is)
-	* you can add .catch() anywhere in the chain; it will catch any error that happens in the promise chain
-		-- but it does not cancel the entire promise chain
-		-- you can return another promise from it and then() blocks there after will continue to work
-		-- even if you don't return a promise from a catch(), then() blocks that are after will execute
-			o when you have another then() block after a catch() or then(), the promise re-enters PENDING mode 
-		-- move catch() to end to cancel the then() chain on error
-		-- you can have multiple catch() blocks
-		-- promise states
-			PENDING => promise is doing work; then() nor catch() will execute
-			RESOLVED => promise is resolved; then() executes
-			REJECTED => promise was rejected; catch() executes
-			SETTLED => this is a final mode; there are no more then() or catch()
-	* both then() and catch() always return a new Promise()
-	* once SETTLED, you can use a special block finally() to do final cleanup work
-### aysnc / await
-	* less syntax then promises; it replicates then() blocks behind the scenes (catch() blocks are handled with inner try/catch)
-	* can only be used with functions (await will only work inside an async function)
-	* async functions automatically return a Promise; it wraps all the content of the function in a promise
-	* add await in front of any Promise within; it awaits for it to succeed or fail (blocks - well really it is waiting to call the invisible then() or catch())
-	* async function imWrappingContentInAPromise() { await somePromise(); console.log("I will run once somePromise resolves or rejects"); }
-	* to do error handling, use a try/catch/finally block (wrap your await command with try/catch)
-### Promise.all([ promiseOne, promiseTwo ]).then((combinedDataOfAllPromises) => { })
-	* static method
-	* takes an array of promises
-	* executes all promises and waits for all of them to finish before sending results to then()
-	* returns an array of values, one element per promise, unless one of the promises fail
-	* if one promise fails, it cancels and only the error will return to the then() or catch()
-### Promise.allSettled() 
-	* same as promiseAll(), but it makes sure all promises finish, even if one fails
-	* returns an array with status/reason on error (status: "rejected") and status/value if success (status: "fulfilled")
-### Promise.race([ promiseOne, promiseTwo ]).then((fastestResult => console.log(fastestResult));
-	* static method
-	* takes an array of promises
-	* the data returned will be the result of the fastest promise; this includes a reject from a promise
+		xhr.send(requestPayload) // if 'POST', 'PUT', etc.
+	}
+ );
+ 
+ return promise;
+}
+sendHttpRequest('GET', 'https://blah').then(responseData => { console.log(JSON.parse(responseData)) });
+```
 	
-## browser objects
-
-### window
-	* the global object for browsers
-	* it contains location, document, history, navigator
-### location
-	* location.href = 'url';
-	* location.replace(''); // back button won't work
-	* location.host // tells you the host the file is running on
-	* location.origin // full domain including protocol
-	* location.pathname // the path after 
-### history
-	* allows you to interact with the history
-	* history.back // go back to page we came from 
-	* history.forward
-	* history.length // how many steps the user took in current tab
-	* history.go(5) // go back 5 steps
-### navigator
-	* allows you to interact with the browser and limited OS
-	* navigator.userAgent // all browser names (thus not really that useful)
-	* navigator.clipboard
-	* navigator.geolocation.getCurrentPosition((data) => console.log(data)) 
-		-- const promise = new Promise((resolve, reject) => {
-			  navigator.geolocation.getCurrentPosition(success => resolve(success), error => reject(error), options);
-		  });
-		  promise.then(success => console.log(success)).catch(error => console.log(error));
-
-## HTTP requests
-
-### dummy online server for testing: JSONPlaceHolder
-### const xhr = new XMLHttpRequest();
-	* supported by all browsers
-	* xhr.open('GET', 'https://jsonplaceholder.typicode/posts');
-		-- no network activity starts here
-		-- 1st arg is the HttpMethod
-		-- 2nd arg is the URL
-	* xhr.responseType = 'json'; // like an ACCEPT header
-	* xhr.send();
-		-- sends the request to the server, but does not receive the response here (asynchronously)
-		-- need a listener callback to handle the response
-	
-	* callback listener 1:  xhr.onload = function() { console.log(xhr.response); }
-		-- widely supported by all browsers
-	* callback listener 2:  xhr.addEventListener(() => {});
-		-- some browsers don't support it (IE and old versions)
-	* xhr.response 
-		-- gives you JSON data and is not javascript you can work with it
-		-- JSON.parse(xhr.response) -> converts JSON to javascript
-	* xhr.onerror = function() { console.log(xhr.response); console.log(xhr.status); }
-		-- only gets called if we have a network error 
-		-- if request succeeds and you get any server response (error or not), it will go into onload
-		-- so you'll want to check your in your onload handler
-			if (xhr.status >= 200 && xhr.status < 300) { resolve(xx); } else { reject(xx); }
-	* JSON
-		-- can only store data, no functions or methods
-		-- fields/properties have to be wrapped with double quotes
-		-- use JSON.stringify(javascriptObject) to convert a javascript object to JSON 
-	* function sendHttpRequest(method, url, requestPayload) {
-		 const promise = new Promise((resolve, reject) => {
-			const xhr = new XMLHttpRequest();
-			xhr.open(method, url);
-			xhr.responseType = 'json';
-			xhr.onLoad = function() {
-				resolve(xhr.response);
-			}
-			xhr.send(requestPayload) // if 'POST', 'PUT', etc.
-		 });
-		 
-		 return promise;
-	  }
-	  sendHttpRequest('GET', 'https://blah').then(responseData => { console.log(JSON.parse(responseData)) });
-	* xhr.setRequestHeader('Content-Type', 'application/json'); // once added, it cannot be removed
-		-- can call it multiple times to add additional headers
 ### fetch API
-	* a more modern alternatively; IE and some older browsers don't support it
-	* it is a globally available function
-	* const promise = fetch(url);
-		-- sends a 'GET' request to that URL
-	* by default, it is Promise based; calling it returns a promise
-	* fetch does not give us a fully parsed response; instead it gives us a stream response
-		-- fetch(url).then(response => response.json());
-		-- response.json() turns the stream response into fully parsed javascript object, but as a Promise
-	* response.text - returns plain text
-	* response.blob() - gives access to file or binary data
-	* there is probably a way to read/write from stream
-	* fetch(url, {
-		 method: 'POST',
-		 body: JSON.stringify(requestPayload),
-		 headers: {
-			'Content-Type': 'application/json'
-		 }
-	  }
-	* errors behave similarly to XMLHttpRequest
-		-- any response from server won't go to promise catch() block
-		-- can check in then() block for correct status
-		-- error handling is klunky
+
+
+	
 ### sending form data
 	* const fd = new FormData();
 	  fd.append('key', someValueVar);
@@ -1867,89 +1606,616 @@ tom.move(34);
 		-- we don't have to set the 'Content-Type' header
 		-- axios is smart about setting the headers; for example, if form data, it will set the multipart/formdata Content-Type header correctly
 		-- also, requestPayload is JSON.stringify() automatically
-		
-## modules
 
-### don't need to worry about the order of your script files that depend upon each other when using modules
-### with modules, every file gets it's own scope; classes, variables, functions are only available outside when using export
-### the window object will still be available to all module files
-	o you can add something to the window object
-### the globalThis is similar to window (and "this" in non-module files)
-	o it is meant to be used with non-browser engines (e.g. node.js)
-	o it can be used in the browser as well and it actually points to window in the browser
-	o it can be used to read/write data
-### even if a file is imported more than once in more than one file, it is only downloaded by the first file that used it
-	o when a module file is imported for the first time, it will be downloaded, parsed, and executed
-	o thus, you can have code that you execute in the file (this isn't the most common, but it's possible)
-### modules run in "strict" mode
-### the "this" reference in a module will return undefined
-### export
+## (ES6+) promises
+
+* used in asynchronous AJAX calls
+
+```javascript
+const promise = new Promise((resolve, reject) => { resolve(data) or reject(error) });
+
+promise
+	.then(
+		(success) => { return anotherPromise; }, 
+		error => console.log(error)).then((success) => {}
+	)
+	.catch((error) => {}).finally(() => {});
+```
+
+* analogous to Java Futures
+* (ES5) can use a shim to polyfill (e.g. es6shim) to get promises
+* returning something from then() will auto-wrap it in a promise (return a string that is)
+* you can add .catch() anywhere in the chain; it will catch any error that happens in the promise chain
+	* but it does not cancel the entire promise chain
+	* you can return another promise from it and then() blocks there after will continue to work
+	* even if you don't return a promise from a catch(), then() blocks that are after will execute
+		* when you have another then() block after a catch() or then(), the promise re-enters PENDING mode 
+	* move catch() to end to cancel the then() chain on error
+	* you can have multiple catch() blocks
+	* promise states
+
+```text	
+PENDING => promise is doing work; then() nor catch() will execute
+RESOLVED => promise is resolved; then() executes
+REJECTED => promise was rejected; catch() executes
+SETTLED => this is a final mode; there are no more then() or catch()
+```
+
+* both then() and catch() always return a new Promise()
+* once SETTLED, you can use a special block finally() to do final cleanup work
+
+### Promise.all([ promiseOne, promiseTwo ]).then((combinedDataOfAllPromises) => { })
+
+* static method
+* takes an array of promises
+* executes all promises and waits for all of them to finish before sending results to then()
+* returns an array of values, one element per promise, unless one of the promises fail
+* if one promise fails, it cancels and only the error will return to the then() or catch()
+
+### Promise.allSettled() 
+
+* same as promiseAll(), but it makes sure all promises finish, even if one fails
+* returns an array with status/reason on error (status: "rejected") and status/value if success (status: "fulfilled")
+
+### Promise.race([ promiseOne, promiseTwo ]).then((fastestResult => console.log(fastestResult));
+
+* static method
+* takes an array of promises
+* the data returned will be the result of the fastest promise; this includes a reject from a promise
+
+## (ES6+) aysnc / await
+
+* used in asynchronous AJAX calls
+* less syntax then promises; it replicates then() blocks behind the scenes (catch() blocks are handled with inner try/catch)
+* can only be used with functions (await will only work inside an async function)
+* async functions automatically return a Promise; it wraps all the content of the function in a promise
+* add await in front of any Promise within; it awaits for it to succeed or fail (blocks - well really it is waiting to call the invisible then() or catch())
+* async function imWrappingContentInAPromise() { await somePromise(); console.log("I will run once somePromise resolves or rejects"); }
+* to do error handling, use a try/catch/finally block (wrap your await command with try/catch)
+
+## (ES6+) fetch / axios (vendor ajax api)
+
+* a more modern alternatively; IE and some older browsers don't support it
+* it is a globally available function
+* const promise = fetch(url);
+	* sends a 'GET' request to that URL
+* by default, it is Promise based; calling it returns a promise
+* fetch does not give us a fully parsed response; instead it gives us a stream response
+
+```javascript
+fetch(url).then(response => response.json());
+response.json() turns the stream response into fully parsed javascript object, but as a Promise
+```
+
+* response.text - returns plain text
+* response.blob() - gives access to file or binary data
+* there is probably a way to read/write from stream
+* errors behave similarly to XMLHttpRequest
+	*  any response from server won't go to promise catch() block
+	* can check in then() block for correct status
+	* error handling is klunky
+* sample
+
+```javascript
+fetch(url, {
+	 method: 'POST',
+	 body: JSON.stringify(requestPayload),
+	 headers: {
+		'Content-Type': 'application/json'
+	 }
+  }
+```
+
+# (HTML tags) 
+
+## can use defer and async to load scripts in HTML (done in <HEAD> section)
+
+* defer 
+	* tells the browser to download script right away and not block HTML parsing; execution of the script will happen after it is downloaded and after HTML parsing finishes
+	* order is guaranteed
+* async 
+	* tells the browser to download script asap and execute immediately; it does not block the HTML parsing, but still will execute before it finishes
+	* order is not guaranteed
+	
+## data-* attributes (on HTML elements)
+
+* it is a way to add data to your HTML elements that can be accessed from javascript 
+* it is stored on the DOM node in a Map called dataset (actual type is DOMStringMap)	
+
+## template tags
+
+* <template> is an HTML tag that is not rendered on it's own
+	* it's content by default is not rendered, but it is part of the DOM
+	* it can have have an id attributes
+	* of HTML that you want rendered is within the template, to render content:	
+	
+```javascript	
+	const someTemplate = document.getElementById('someTemplateId');
+	const bodyOfTemplate = document.importNode(someTemplate.content, true); // creates a new node with a deep import 
+	hostEl.append(bodyOfTemplate);
+```
+
+# DOM manipulation
+
+## Element Node versus Text Node
+
+* .children only returns element nodes (HTMLCollection)
+	* this is usually the most popular
+* .childNodes returns NodeList which will include element and text nodes (all nodes)
+* text nodes	
+	* "data" property is the value of the text node
+	* text nodes are also used for the whitespace that is between elements (e.g. <HTML>\n<BODY>)
+	* cannot have child nodes; they can only hold text
+* parentNode and parentElement are almost always the same, with the exception of the document.documentElement
+	* document.documentElement.parentElement = null
+	* document.documentElement.parentNode = #document
+		
+## document
+
+* document.body selects the <body> element node
+* document.head selects the <HEAD> element node
+* document.documentElement selects the <html> element node
+
+## you can call querySelector() and querySelectorAll() on any element (and not just document)
+
+* querySelector():  returns null if no element is found 
+* querySelectorAll(): returns empty NodeList if no element is found
+	* takes a snapshot of the dom; additions to real dom are not reflected on snapshot (but reference changes are seen; just not addition/removal of nodes)
+	* more flexible than the older getElementsByTagName, but it is a snapshot
+		
+## document.getElementById()
+
+* live (not a snapshot)
+* returns null if no match
+
+## document.getElementByClassName("someCssClassName")
+
+* returns an empty HTMLCollection if no match
+	
+## document.getElementsByTagName("p")
+
+* returns an empty HTMLCollection if no match 
+	* unlike querySelectorAll(), any addition/removal of node will be seen because it is a live list
+	
+## document.querySelectorAll() returns a NodeList which looks like an array but isn't
+
+* can use var newArray = Array.prototype.slice.call(myNodeList); // ES5 way
+* Arrays.from() // ES6 way
+
+## traversal
+
+* descendant traversal
+	* querySelector() and querySelectorAll() can sometimes be slower than using direct traversal
+	* children (HTMLCollection) or childNodes (NodeList)
+	* firstChild versus firstElementChild (the first one can return text nodes)	
+	* lastChild and lastElementChild
+* ancestor traversal
+	* parentNode and parentElement
+	* closest('cssSelector') 
+		* ancestor method that works like querySelector() in that it takes a CSS selector
+		* it will pick the nearest ancestor
+		* it's css selector query includes the element itself if it matches
+* sibling traversal
+	* previousSibling and previousElementSibling
+	* nextSibling and nextElementSibling
+	
+## styling dom elements
+
+* style property 
+	* assigned on the style property will override any other style assigned by a class, etc.
+	* they are based upon the CSS properties but are adjusted because they don't allow hyphens, for example (e.g. style.backgroundColor)
+* className property 
+	* string
+	* can set to empty string to clear it (className = '')
+	* can set multivalues as such: className = 'classNameOne classNameTwo'
+* classList property
+	* object
+	* easier to manage if you have multiple classes
+	* methods	
+		* element.classList.contains()
+		* element.classList.add()
+		* element.classList.remove()
+		* element.classList.replace()
+		* element.classList.toggle() // removes if exists or adds if not
+			
+## creating and inserting elements
+
+* HTML string
+	* innerHTML - add (render) HTML string of an existing element
+		* always replaces the current content, including descendants
+		* only use if you want to replace all; don't use to add to
+	* insertAdjacentHTML() - add (render) HTML string in a specific position to an existing element
+		* 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+		* use this one to add to existing HTML
+		* does not give you direct access to the newly added HTML
+	* textContent
+		* gives all the text content of all the child elements 
+		* you can set it, but it will also remove all the elements in it
+		* only use this if text is the content you want to change on your node
+* createElement('tagName')
+	* creates a new element node; e.g. var newElement = document.createElement('li', {is: ...});
+* adding / inserting / replacing / appending nodes
+	* appendChild(node) / append(node) - append new DOM element/node
+		* append can also take a string and will append it as a text node; append is not supported by IE and by older browsers
+	* prepend(), before(), after(), insertBefore() - insert new DOM element/node in specific position
+		* before and after have issues on safari
+	* replaceChild(), replaceWith() - replace existing element/node with new one
+	* insertAdjacentElement() - add (render) element node in a specific position to an existing element
+		* 'beforebegin', 'afterbegin', 'beforeend', 'afterend'
+		* safer than before() and after() because it is supported in most browsers
+			
+## removing nodes
+
+* node.remove() - renders the removal of the element from the DOM
+	* IE doesn't support it
+* node.parentELement.removeChild(node)
+	* supported by all browsers
+		
+## clone nodes
+
+* element.cloneNode(boolean deepClone) - returns a brand new node
+	* deepClone true means all child descendants are cloned (all children)
+		
+## moving nodes
+
+* if you get a reference to an existing node and append it somewhere else, it will move the node (not add another)
+
+```javascript
+const sourceEl = document.getElementById(id);
+const destinationEl = document.querySelector(someCssSelector);
+destinationEl.append(sourceEl); // will move the existing element as child of destinationEl
+```
+		
+## element box dimensions
+
+* element.getBoundingClientRect() // returns DOMRect
+* position is always top left corner (x = left, y = top) to (right, bottom) (y=0 top to y=#### bottom), (x=0 left to x=#### right)
+* el.offsetTop, el.offsetLeft - always relative to your document start, NOT the viewport (i.e. it does not change when scrolling)
+* el.clientTop, el.clientLeft - give you the inner positioning (how far it is from top-left to content of the box)
+	*  content of box implies box without borders or potential scroll bars
+* el.offsetWidth, el.offsetHeight - height and width of the box, including all borders and scrollbars
+* el.clientWidth, el.clientHeight - inner width and height without borders and scrollbars
+* el.scrollHeight - gives entire height of the content, including the non-visible parts
+* el.scrollTop - tells you how much you scolled content in the box
+* to assign new positions to an element, you need to use CSS (el.style.position = 'absolute'; // to position it relative to the screen)
+	* el.style.left = x + 'px'; el.style.top = y + 'px';
+		
+## document width and height
+
+* window.innerWidth and window.innerHeight
+	* problem is if you have a visible scrollbar, it includes it 
+* (better way) document.documentElement.clientWidth and document.documentElement.clientHeight (these deduct any visible scroll bars)
+	
+## scrolling
+
+* to scroll to absolute: el.scrollTo(x, y) // x,y is how much you want to scroll right and down in absolute values (in pixels)
+* to scroll to relative: el.scrollBy(x, y) // x,y is how much you want to scroll right and down from where you are
+* scrollTo() and scrollBy() also take behavior when an object is passed in (e.g. scrollBy({top: 50, behavior: 'smooth' }))
+* to make an element visible: el.scrollIntoView({ behavior: 'smooth' }); // jumps (no animation) when no object is provided
+				
+## load script dynamically
+
+* example doing it by hand
+
+```javascript
+const someScript = document.createElement('script');
+someScript.textContent = 'alert("Hi there")';
+document.head.append(someScript);
+```
+
+* file example
+
+```javascript
+const someScript = document.createElement('script');
+someScript.src = 'relative/to/html_file/someScript.js';
+someScript.defer = 'true;
+document.head.append(someScript);
+```
+	
+# Events
+
+## adding event listeners
+
+* can add onXxxx attribute to the Html element
+	* this is not the preferred way
+* button.addEventListener('click', () => {});
+* add same property that HTML node uses:  button.onClick  = function() {}
+	* doesn't support assigning more than one function this way
+	
+## removing event listeners	
+
+* clone / replaceWith
+
+```javascript
+static clearEventListeners(element) {
+	// doing it this way will drop all event listeners (they will be garbage collected)
+	const clone = element.cloneNode(true);
+	element.replaceWith(clone);
+	return clone;
+}
+```	
+
+* el.removeEventListener('eventName', sameFunctionHandler)
+	
+## to get event listeners in chrome
+
+* getEventListener($0)
+	
+## older browsers use event.which versus event.keyCode
+
+## event delegation
+
+* add a single event handler to a parent element in order to avoid having to add event handlers to multiple child elements
+* the event will propagate up
+* in the handler we get event.target and that tells us where the event actually happened
+* can also do event.target.tagName to get the element tag (e.g. LI, UL, BUTTON, etc.)
+
+## you can assign multiple event listeners to the same object and event the same event type
+
+* if you add the same event handler function, nothing extra gets added; but new functions will get added
+* be careful when adding multiple event handlers with different functions; if you intended to replace the previous one, you'll need to remove it
+
+```javascript
+Class DomHelper {
+	static clearEventListeners(element) {
+		// doing it this way will drop all event listeners (they will be garbage collected)
+		const clone = element.cloneNode(true);
+		element.replaceWith(cloneElement);
+		return clonedElement;
+	}
+}
+```
+
+### mouse events, drag events, other events
+
+* they all have event.target
+* mouse enter, etc.: relatedTarget will tell you the element it was on before entering for example
+	
+## to disable an event target
+
+* event.target.disabled = true; // you'll see disabled on the HTML element
+	
+## event.preventDefault()
+
+* prevents the default behavior 
+	* example a submit button in a form	
+		
+## DOM Events have two phases (event propagation)
+
+1.  capturing phase - down
+	* checks for capturing listener first on parent nodes - but by default event listeners turn this off
+2.  bubbling phase - up
+	* checks first on child nodes then works it's way up
+	* can change to capturing phase if you set the third parameter in addEventListener to true
+	* all events will get called while the event propagates (unless propagation is stopped)
+	* event.stopPropagation() stops the event from propogating
+		* any other listeners for the same type of event on an ancestor will not receive event
+	* not all events propagate (see reference for each event)
+		* click event does propagate
+		* can log the event and "bubbles: false" means it doesn't propagate
+	* event delegation - means to have an event listener on an ancestor versus putting it on all the children
+		* event.target - the actual element on which you clicked
+		* event.currentTarget - the element you added the listener to
+		* event.target.closest('li') - to get the closest ancestor (<li> element in this case) of the target
+		
+## trigger events
+
+* if you trigger an event programmatically, any existing event listener will be skipped
+* el.click() - triggers click event on the element
+	
+## how to add drag and drop capability
+
+1.  required: mark element as "draggable"
+	* on the element in the HTML, add attribute draggable="true"
+2.  required: listen to "dragstart" event - describe operation and append data
+	* el.addEventListener('dragstart', event => { event.dataTransfer.setData('text/plain', this.id); event.dataTransfer.effectAllowed = 'move'; });
+	* can append id in the event handler so that we know what to do with it when it is dropped
+3.  required: mark an area where it can be dropped by adding an event listener (i.e. drop zone)
+	* accept drop via "dragenter" and "dragover" Events 
+	* in the event listeners, you need to call event.preventDefault()
+	
+```javascript	
+el.addEventListener('dragenter', event => { 
+	if (event.dataTransfer.types[0] === 'text/plain') {
+		el.parentElement.classList.add('droppable'); // this is a homegrown CSS class that provide UI visibility
+		event.preventDefault(); 
+	}
+});
+el.addEventListener('dragover', event => { 
+	if (event.dataTransfer.types[0] === 'text/plain') {
+		event.preventDefault(); 
+	}
+});
+```
+	  
+	* you cannot read / get the data here
+4.  optional: listen to "dragleave" Event - e.g. update styles
+
+```javascript
+  el.addEventListener('dragleave', event => { 
+	 if (event.relatedTarget.closest('someCSSselectorForParent') !== el) { // relatedTarget points at the element we moved to
+		el.parentElement.classList.remove('droppable');
+	 }		   
+  });	
+```	
+  
+5.  required: listen to "drop" Event, then update data / UI
+	* we can now extract data we added in the dataTransfer 'dragstart' event
+	
+```javascript	
+el.addEventListener('drop', event => { 
+	const dataId = event.dataTransfer.getData('text/plain');	
+	// if find your element by id here, don't add it (return)
+	// add to this area
+	// remove from old area 
+	el.parentElement.classList.remove('droppable');
+	event.preventDefault(); // not required
+});
+```
+
+6.  optional: listen to a "dragend" Event, then update data / UI
+	* do this in same place you added the 'dragstart' event listener
+
+```javascript
+el.addEventListener('dragend', event => { 
+	// do something if you want	
+	// you can check the event.dataTransfer.dropAffect to see if it is "none" which means it didn't work
+});
+```
+			
+# browser objects
+
+## window
+
+* the global object for browsers
+* it contains location, document, history, navigator
+	
+## location
+
+* location.href = 'url';
+* location.replace(''); // back button won't work
+* location.host // tells you the host the file is running on
+* location.origin // full domain including protocol
+* location.pathname // the path after 
+	
+## history
+
+* allows you to interact with the history
+* history.back // go back to page we came from 
+* history.forward
+* history.length // how many steps the user took in current tab
+* history.go(5) // go back 5 steps
+	
+## navigator
+
+* allows you to interact with the browser and limited OS
+* navigator.userAgent // all browser names (thus not really that useful)
+* navigator.clipboard
+* navigator.geolocation.getCurrentPosition((data) => console.log(data)) 
+
+```javascript
+const promise = new Promise((resolve, reject) => {
+	navigator.geolocation.getCurrentPosition(success => resolve(success), error => reject(error), options);
+});
+promise.then(success => console.log(success)).catch(error => console.log(error));
+```
+		
+# (ES6+) modules
+
+* don't need to worry about the order of your script files that depend upon each other when using modules
+* with modules, every file gets it's own scope; classes, variables, functions are only available outside when using export
+* the window object will still be available to all module files
+	* you can add something to the window object
+* the globalThis is similar to window (and "this" in non-module files)
+	* it is meant to be used with non-browser engines (e.g. node.js)
+	* it can be used in the browser as well and it actually points to window in the browser
+	* it can be used to read/write data
+* even if a file is imported more than once in more than one file, it is only downloaded by the first file that used it
+	* when a module file is imported for the first time, it will be downloaded, parsed, and executed
+	* thus, you can have code that you execute in the file (this isn't the most common, but it's possible)
+* modules run in "strict" mode
+* the "this" reference in a module will return undefined
+
+
+
+## export
 	* export class SomeClass {} 
-		-- says SomeClass is available outside the file	
+		* says SomeClass is available outside the file	
 	* used without "default", it is referred to as a named export; the import needs to refer to it by name (for the most part)
 	* to the script HTML tag, you add type="module"
-		-- <script src="app.js" type="module"></script>
-		-- you can add it to multiple scripts
-		-- when using it with export / import, you don't need to add the <script> tag for the file being exported / imported
+		* <script src="app.js" type="module"></script>
+		* you can add it to multiple scripts
+		* when using it with export / import, you don't need to add the <script> tag for the file being exported / imported
 			* it will automatically download the script
-		-- do this to your main app.js script and then all other file dependencies will automatically be downloaded
+		* do this to your main app.js script and then all other file dependencies will automatically be downloaded
 	* will give CORS error when testing with file system; thus it requires a web-server to serve the files
 	* you can export more than one thing
 	* other examples
-		-- export function myFunc() {}
-		-- export const myConstant;
-	* export default
-		-- often used when it is the only element, but can be used with other exports
-		-- meant to be used as a default import so you don't need to specify the name
-		-- often called a nameless export because javascript ignores the name
-			o export default class {} // the class name is optional and ignored if present
-		-- you can only have one export default per file
-### import
-	* can import variables, functions, classes that were exported in other files
-	* import { ExactName } from './relative/path/to/file.extension'; // use .. to navigate up
-		-- where another file is export ExactName
-	* the import statement is automatically sorted to the top
-		-- you should always put your statements at the top
-	* .mjs is an extension some people use to denote it's a module js file
-	* can import from multiple files
-		-- import { ServiceOne } from '../services/ServiceOne.js';
-		   import { ServiceTwo } from '../services/ServiceTwo.js';
-	* can import multiple things from one file
-		-- import { someFunction, ServiceTwo } from '../services/ServiceTwo.js';
-		-- import * as AnyNameOfYourChoice from '../services/ServiceTwo.js';
-			o bundle together all the exports of the file into the object called AnyNameOfYourChoice
-			o AnyNameOfYourChoice.someFunction()
-			o AnyNameOfYourChoice.ServiceTwo.blah()
-		-- you can also use the 'as' notation to assign a new name (i.e. an alias)
-			o import { ServiceOne as service } from '../services/ServiceOne.js';
-	* importing of default exports
-		-- import AnyNameOfYourChoice from './fileName.js'; // this will get assigned the default export of the file
-		-- disadvantage is every team member might use a different naming convention when they import the default from the same file
-		-- with multiple imports including default
-			o import AnyNameOfYourChoice, { NameExportOne, NameExportTwo } from './fileName.js';
-	* static versus dynamic import
-		-- static import is the normal import syntax; import of file is downloaded when the file that includes the import is executed
-		-- dynamic import allows you to load imports conditionally
-			o call import('./fileToImport.js'); in your code
-			o returns a Promise
-				import('./fileToImport.js').then(module => (do your code here and use module to call methods, etc.));
-### you can have import of some things and export of things in same file
-### for ES5 browsers, can use traceur.js (transpiler) and system.js (modules) together to support ES6 and modules 
-	* this is when not using a bundler (e.g. webpack)
-	* ensure the following comes before your other script tags
-		-- <script src="traceur-compiler/src/traceur.js"></script>
-		   <script src="https://google.github.io/traceur-compiler/bin/BrowserSystem.js"></script>
-		   <script src="traceur-compiler/src/bootstrap.js"></script>
-		   alternative to BrowserSystem: <script src="system.js"></script>
-		-- with system.js, use System.import
-	* ES6 to ES5 transpiler:  https://github.com/google/traceur-compiler
-	  ES6 module support:  https://github.com/systemjs/systemjs
 
-## development servers
+```javascript
+export function myFunc() {}
+export const myConstant;
+```
+		
+### **export default**
+	* often used when it is the only element, but can be used with other exports
+	* meant to be used as a default import so you don't need to specify the name
+	* often called a nameless export because javascript ignores the name
+		* export default class {} // the class name is optional and ignored if present
+	* you can only have one export default per file
+	
+## import
 
-### npm serve.js
-	* spins up a mini-server
-	* it is meant to be used with npm and the node.js runtime
-	* sudo npm install -g serve (global package)
-	* running serve from the folder that has index.html will cause it to load index.html automatically
+* can import variables, functions, classes that were exported in other files
+* import { ExactName } from './relative/path/to/file.extension'; // use .. to navigate up
+	* where another file is export ExactName
+* the import statement is automatically sorted to the top
+	* you should always put your statements at the top
+* .mjs is an extension some people use to denote it's a module js file
+* can import from multiple files
+
+```javascript
+import { ServiceOne } from '../services/ServiceOne.js';
+import { ServiceTwo } from '../services/ServiceTwo.js';
+```
+	   
+* can import multiple things from one file
+
+```javascript
+import { someFunction, ServiceTwo } from '../services/ServiceTwo.js';
+
+/*
+	o bundle together all the exports of the file into the object called AnyNameOfYourChoice
+	o AnyNameOfYourChoice.someFunction()
+	o AnyNameOfYourChoice.ServiceTwo.blah()
+*/
+import * as AnyNameOfYourChoice from '../services/ServiceTwo.js';
+
+// you can also use the 'as' notation to assign a new name (i.e. an alias)
+import { ServiceOne as service } from '../services/ServiceOne.js';
+```
+
+* importing of default exports
+	* import AnyNameOfYourChoice from './fileName.js'; // this will get assigned the default export of the file
+	* disadvantage is every team member might use a different naming convention when they import the default from the same file
+	* with multiple imports including default
+		* import AnyNameOfYourChoice, { NameExportOne, NameExportTwo } from './fileName.js';
+* static versus dynamic import
+	* static import is the normal import syntax; import of file is downloaded when the file that includes the import is executed
+	* dynamic import allows you to load imports conditionally
+		* call import('./fileToImport.js'); in your code
+		* returns a Promise
+		
+```javascript		
+import('./fileToImport.js').then(module => (/* do your code here and use module to call methods, etc. */ ));
+```
+			
+## you can have import of some things and export of things in same file
+
+## for ES5 browsers, can use traceur.js (transpiler) and system.js (modules) together to support ES6 and modules 
+
+* this is when not using a bundler (e.g. webpack)
+* ensure the following comes before your other script tags
+
+```html
+<script src="traceur-compiler/src/traceur.js"></script>
+<script src="https://google.github.io/traceur-compiler/bin/BrowserSystem.js"></script>
+<script src="traceur-compiler/src/bootstrap.js"></script>
+
+<!-- alternative to BrowserSystem -->
+<script src="system.js"></script>
+```
+	   
+* with system.js, use System.import
+* ES6 to ES5 transpiler:  https://github.com/google/traceur-compiler
+* ES6 module support:  https://github.com/systemjs/systemjs
+
+# development servers
+
+## npm serve.js
+
+* spins up a mini-server
+* it is meant to be used with npm and the node.js runtime
+* sudo npm install -g serve (global package)
+* running serve from the folder that has index.html will cause it to load index.html automatically
 	
