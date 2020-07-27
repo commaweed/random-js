@@ -1581,31 +1581,6 @@ function sendHttpRequest(method, url, requestPayload) {
 }
 sendHttpRequest('GET', 'https://blah').then(responseData => { console.log(JSON.parse(responseData)) });
 ```
-	
-### fetch API
-
-
-	
-### sending form data
-	* const fd = new FormData();
-	  fd.append('key', someValueVar);
-	  fd.append('key2', someValueVar2);
-	* in the fetch API, set body: data instead of JSON.stringify(data)
-	* ContentType: multipart/formdata
-	* const fd = new FormFata(formReference); // javascript will try and send all fields in form
-		-- requires each form fields to have name attribute
-	* not all APIs support FormData
-### third party library is better: Axios 
-	* easier to use then fetch; don't need to parse to javascript object; you get javascript object automatically
-		-- does not treat technically successful responses as successful
-		-- throws an error with status code is 400+, 500+, etc.
-		-- use error.response
-	* axios.get(), etc., returns a Promise
-		-- use const reesponse = axios.get(); response.data (but with async/await or then()
-	* axios.post(url, requestPayload)
-		-- we don't have to set the 'Content-Type' header
-		-- axios is smart about setting the headers; for example, if form data, it will set the multipart/formdata Content-Type header correctly
-		-- also, requestPayload is JSON.stringify() automatically
 
 ## (ES6+) promises
 
@@ -1691,7 +1666,7 @@ response.json() turns the stream response into fully parsed javascript object, b
 * response.blob() - gives access to file or binary data
 * there is probably a way to read/write from stream
 * errors behave similarly to XMLHttpRequest
-	*  any response from server won't go to promise catch() block
+	* any response from server won't go to promise catch() block
 	* can check in then() block for correct status
 	* error handling is klunky
 * sample
@@ -1705,6 +1680,143 @@ fetch(url, {
 	 }
   }
 ```
+
+### Sending Form Data
+
+```javascript
+const fd = new FormData();
+fd.append('key', someValueVar);
+fd.append('key2', someValueVar2);
+``` 
+ 
+* in the fetch API, set body: data instead of JSON.stringify(data)
+* ContentType: multipart/formdata
+* const fd = new FormFata(formReference); // javascript will try and send all fields in form
+	-- requires each form fields to have name attribute
+* not all APIs support FormData
+
+### third party library is better: Axios 
+
+* easier to use then fetch; don't need to parse to javascript object; you get javascript object automatically
+	* does not treat technically successful responses as successful
+	* throws an error with status code is 400+, 500+, etc.
+	* use error.response
+* axios.get(), etc., returns a Promise
+	* use const reesponse = axios.get(); response.data (but with async/await or then()
+* axios.post(url, requestPayload)
+	* we don't have to set the 'Content-Type' header
+	* axios is smart about setting the headers; for example, if form data, it will set the multipart/formdata Content-Type header correctly
+	* also, requestPayload is JSON.stringify() automatically
+
+# (ES6+) modules
+
+* don't need to worry about the order of your script files that depend upon each other when using modules
+* with modules, every file gets it's own scope; classes, variables, functions are only available outside when using export
+* the window object will still be available to all module files
+	* you can add something to the window object
+* the globalThis is similar to window (and "this" in non-module files)
+	* it is meant to be used with non-browser engines (e.g. node.js)
+	* it can be used in the browser as well and it actually points to window in the browser
+	* it can be used to read/write data
+* even if a file is imported more than once in more than one file, it is only downloaded by the first file that used it
+	* when a module file is imported for the first time, it will be downloaded, parsed, and executed
+	* thus, you can have code that you execute in the file (this isn't the most common, but it's possible)
+* modules run in "strict" mode
+* the "this" reference in a module will return undefined
+
+
+
+## export
+	* export class SomeClass {} 
+		* says SomeClass is available outside the file	
+	* used without "default", it is referred to as a named export; the import needs to refer to it by name (for the most part)
+	* to the script HTML tag, you add type="module"
+		* <script src="app.js" type="module"></script>
+		* you can add it to multiple scripts
+		* when using it with export / import, you don't need to add the <script> tag for the file being exported / imported
+			* it will automatically download the script
+		* do this to your main app.js script and then all other file dependencies will automatically be downloaded
+	* will give CORS error when testing with file system; thus it requires a web-server to serve the files
+	* you can export more than one thing
+	* other examples
+
+```javascript
+export function myFunc() {}
+export const myConstant;
+```
+		
+### **export default**
+	* often used when it is the only element, but can be used with other exports
+	* meant to be used as a default import so you don't need to specify the name
+	* often called a nameless export because javascript ignores the name
+		* export default class {} // the class name is optional and ignored if present
+	* you can only have one export default per file
+	
+## import
+
+* can import variables, functions, classes that were exported in other files
+* import { ExactName } from './relative/path/to/file.extension'; // use .. to navigate up
+	* where another file is export ExactName
+* the import statement is automatically sorted to the top
+	* you should always put your statements at the top
+* .mjs is an extension some people use to denote it's a module js file
+* can import from multiple files
+
+```javascript
+import { ServiceOne } from '../services/ServiceOne.js';
+import { ServiceTwo } from '../services/ServiceTwo.js';
+```
+	   
+* can import multiple things from one file
+
+```javascript
+import { someFunction, ServiceTwo } from '../services/ServiceTwo.js';
+
+/*
+	o bundle together all the exports of the file into the object called AnyNameOfYourChoice
+	o AnyNameOfYourChoice.someFunction()
+	o AnyNameOfYourChoice.ServiceTwo.blah()
+*/
+import * as AnyNameOfYourChoice from '../services/ServiceTwo.js';
+
+// you can also use the 'as' notation to assign a new name (i.e. an alias)
+import { ServiceOne as service } from '../services/ServiceOne.js';
+```
+
+* importing of default exports
+	* import AnyNameOfYourChoice from './fileName.js'; // this will get assigned the default export of the file
+	* disadvantage is every team member might use a different naming convention when they import the default from the same file
+	* with multiple imports including default
+		* import AnyNameOfYourChoice, { NameExportOne, NameExportTwo } from './fileName.js';
+* static versus dynamic import
+	* static import is the normal import syntax; import of file is downloaded when the file that includes the import is executed
+	* dynamic import allows you to load imports conditionally
+		* call import('./fileToImport.js'); in your code
+		* returns a Promise
+		
+```javascript		
+import('./fileToImport.js').then(module => (/* do your code here and use module to call methods, etc. */ ));
+```
+			
+## you can have import of some things and export of things in same file
+
+## for ES5 browsers, can use traceur.js (transpiler) and system.js (modules) together to support ES6 and modules 
+
+* this is when not using a bundler (e.g. webpack)
+* ensure the following comes before your other script tags
+
+```html
+<script src="traceur-compiler/src/traceur.js"></script>
+<script src="https://google.github.io/traceur-compiler/bin/BrowserSystem.js"></script>
+<script src="traceur-compiler/src/bootstrap.js"></script>
+
+<!-- alternative to BrowserSystem -->
+<script src="system.js"></script>
+```
+	   
+* with system.js, use System.import
+* ES6 to ES5 transpiler:  https://github.com/google/traceur-compiler
+* ES6 module support:  https://github.com/systemjs/systemjs
 
 # (HTML tags) 
 
@@ -2100,116 +2212,6 @@ const promise = new Promise((resolve, reject) => {
 promise.then(success => console.log(success)).catch(error => console.log(error));
 ```
 		
-# (ES6+) modules
-
-* don't need to worry about the order of your script files that depend upon each other when using modules
-* with modules, every file gets it's own scope; classes, variables, functions are only available outside when using export
-* the window object will still be available to all module files
-	* you can add something to the window object
-* the globalThis is similar to window (and "this" in non-module files)
-	* it is meant to be used with non-browser engines (e.g. node.js)
-	* it can be used in the browser as well and it actually points to window in the browser
-	* it can be used to read/write data
-* even if a file is imported more than once in more than one file, it is only downloaded by the first file that used it
-	* when a module file is imported for the first time, it will be downloaded, parsed, and executed
-	* thus, you can have code that you execute in the file (this isn't the most common, but it's possible)
-* modules run in "strict" mode
-* the "this" reference in a module will return undefined
-
-
-
-## export
-	* export class SomeClass {} 
-		* says SomeClass is available outside the file	
-	* used without "default", it is referred to as a named export; the import needs to refer to it by name (for the most part)
-	* to the script HTML tag, you add type="module"
-		* <script src="app.js" type="module"></script>
-		* you can add it to multiple scripts
-		* when using it with export / import, you don't need to add the <script> tag for the file being exported / imported
-			* it will automatically download the script
-		* do this to your main app.js script and then all other file dependencies will automatically be downloaded
-	* will give CORS error when testing with file system; thus it requires a web-server to serve the files
-	* you can export more than one thing
-	* other examples
-
-```javascript
-export function myFunc() {}
-export const myConstant;
-```
-		
-### **export default**
-	* often used when it is the only element, but can be used with other exports
-	* meant to be used as a default import so you don't need to specify the name
-	* often called a nameless export because javascript ignores the name
-		* export default class {} // the class name is optional and ignored if present
-	* you can only have one export default per file
-	
-## import
-
-* can import variables, functions, classes that were exported in other files
-* import { ExactName } from './relative/path/to/file.extension'; // use .. to navigate up
-	* where another file is export ExactName
-* the import statement is automatically sorted to the top
-	* you should always put your statements at the top
-* .mjs is an extension some people use to denote it's a module js file
-* can import from multiple files
-
-```javascript
-import { ServiceOne } from '../services/ServiceOne.js';
-import { ServiceTwo } from '../services/ServiceTwo.js';
-```
-	   
-* can import multiple things from one file
-
-```javascript
-import { someFunction, ServiceTwo } from '../services/ServiceTwo.js';
-
-/*
-	o bundle together all the exports of the file into the object called AnyNameOfYourChoice
-	o AnyNameOfYourChoice.someFunction()
-	o AnyNameOfYourChoice.ServiceTwo.blah()
-*/
-import * as AnyNameOfYourChoice from '../services/ServiceTwo.js';
-
-// you can also use the 'as' notation to assign a new name (i.e. an alias)
-import { ServiceOne as service } from '../services/ServiceOne.js';
-```
-
-* importing of default exports
-	* import AnyNameOfYourChoice from './fileName.js'; // this will get assigned the default export of the file
-	* disadvantage is every team member might use a different naming convention when they import the default from the same file
-	* with multiple imports including default
-		* import AnyNameOfYourChoice, { NameExportOne, NameExportTwo } from './fileName.js';
-* static versus dynamic import
-	* static import is the normal import syntax; import of file is downloaded when the file that includes the import is executed
-	* dynamic import allows you to load imports conditionally
-		* call import('./fileToImport.js'); in your code
-		* returns a Promise
-		
-```javascript		
-import('./fileToImport.js').then(module => (/* do your code here and use module to call methods, etc. */ ));
-```
-			
-## you can have import of some things and export of things in same file
-
-## for ES5 browsers, can use traceur.js (transpiler) and system.js (modules) together to support ES6 and modules 
-
-* this is when not using a bundler (e.g. webpack)
-* ensure the following comes before your other script tags
-
-```html
-<script src="traceur-compiler/src/traceur.js"></script>
-<script src="https://google.github.io/traceur-compiler/bin/BrowserSystem.js"></script>
-<script src="traceur-compiler/src/bootstrap.js"></script>
-
-<!-- alternative to BrowserSystem -->
-<script src="system.js"></script>
-```
-	   
-* with system.js, use System.import
-* ES6 to ES5 transpiler:  https://github.com/google/traceur-compiler
-* ES6 module support:  https://github.com/systemjs/systemjs
-
 # development servers
 
 ## npm serve.js
