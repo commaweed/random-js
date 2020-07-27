@@ -1,6 +1,74 @@
 # JavaScript - (notes from Douglas Crockford book, udemy classes, online resources)
 
-## Only has 6 types of values
+## JavaScript Versions and Features
+
+### ES5	(2009) 
+
+* most modern browsers support this standard at a minimum
+				
+### ES6 / ECMAScript2015	
+
+| Feature |	
+| ---- |
+| arrow functions |
+| classes |
+| enhanced object literals |
+| template strings |
+| destructuring |
+| default + rest + spread |
+| let + const |
+| iterators + for..of |
+| generators |
+| unicode |
+| modules |
+| module loaders |
+| map + set + weakmap + weakset |
+| proxies |
+| symbols |
+| subclassable built-ins |
+| promises |
+| math + number + string + array + object APIs |
+| binary and octal literals |
+| reflect api |
+| tail calls |
+
+### ES7 / ECMAScript2016	
+
+| Feature |	
+| ---- |	
+| Array.prototype.includes |
+| Exponentiation Operator |
+
+### ES8 / ECMAScript2017	
+
+| Feature |	
+| ---- |	
+| Async functions (Async / Await) |
+| Object.entries |
+| Object.values |
+| Object.getOwnPropertyDescriptors |
+| Trailing commas |
+
+### ES9 / ECMAScript2018	
+
+| Feature |	
+| ---- |
+| Async iterators |
+| Object rest properties |
+| Object spread properties |
+| Promise.prototype.finally |
+
+### ES10 / ECMAScript2019		
+
+| Feature |	
+| ---- |			
+| Array.prototype.{flat,flatMap} |
+| Object.fromEntries |
+| String.prototype.{trimStart,trimEnd} |
+| Symbol.prototype.description |
+| Optional catch binding |
+
+## Types of values (there are only 6)
 
 ### 1.  Numbers
 
@@ -86,6 +154,27 @@ console.log(Boolean({}) === true);
 * new Object() produces an empty container of name/value pairs
 * a name can be any string, a value can be any value (except undefined)
 * members can be accessed with dot notation or subscript notation
+
+## primitives
+
+* Numbers, String, Booleans, Undefined, Null
+	* unary plus on numbers is fast way to convert a string to a number (similar to parseInt or parseFloat when decimals are in the number)
+```javascript
++'2e3' === 2000; but parseInt('2e3',10) === 2;
++'0xf' === 15; but parseInt("0xf", 10) === 0;
+```
+
+* assigning primitives are copies of the value (var a=5; b=a; // b will be a copy of a and changing a will not reflect in b); references are copies of the pointer
+* Date
+
+```javascript
+const date = new Date();
+date.getDay() // etc.
+date.getTime() // gives epoch since 1970
+const date = new Date(dateObject);
+const date = new Date('07/11/19');
+date - date2 = differenceTimeInMillis
+```
 
 ## Arrays
 
@@ -208,17 +297,90 @@ console.log(newObject.sayHello());
 * Objects are always passed by reference to functions
 * === (and ==) operator compares object references, not values
 * members can be deleted with: delete myObject[name];
+* all objects inherit from Object; this is sometimes called the "global" Object
+
+### ways to loop through object properties
+
+#### for (const key in object) 
+
+* The problem with a for...in loop is that it iterates through properties in the Prototype chain. 
+* When you loop through an object with the for...in loop, you need to check if the property belongs to the object. 
+
+```javascript 
+for (var property in object) {
+	if (object.hasOwnProperty(property)) {
+		// Do things here
+	}
+}
+```
+* better way to loop through objects is first to convert the object into an array
+
+### some techniques to convert an object to an array
+
+* Object.keys() 
+* Object.values()
+* Object.entries()
+	
+### ways to copy an object
+
+1.  Object.assign(target, source)
+
+```javascript
+const returnedTarget = Object.assign({}, existingObject);
+```
+
+2.  use the spread operator: const blah = { ...blah1 };
+
+```javascript
+const returnedTarget = Object.assign({}, existingObject);
+```
+
+3.  use JSON.parse()
+
+```javascript
+JSON.parse(JSON.stringify(object));
+```
+
+### determine object property existence
+
+```javascript
+if ('propertyName' in object) {}
+
+if (object.hasOwnProperty(property)) {}
+
+if (object.property === undefined) {}
+```	
+
+### object descriptors
+
+* configurable - you can delete it
+* enumerable - appears in for in loop (e.g. for (key in object) {}
+* writable - you can update it
+
+```javascript
+Object.getOwnPropertyDescriptor(object, "key");
+
+Object.getOwnPropertyDescriptors(object);
+
+Object.defineProperty(object, 'propertyName', { writable: false }); // every value you don't set gets set to false
+```
 
 ### Object Literals
 
 * Object literals are wrapped in {}
 * Names can be names or strings (i.e. quotes or no quotes)
+* can put a variable without a value, use a number as a variable name, or use a square bracket (good for variables): 
+
+```javascript
+const blah = { someVar1, [someVar2]: "someValue", 1.5: "someValue" };
+```
+
 * Values can be expressions
 * Object literals can be used anywhere a value can appear
 * three ways to create an object:
 
 1.  new Object()
-2.  object literal {}
+2.  var blah = {}
 3.  Object.create(o)
 
 ```javascript
@@ -246,81 +408,18 @@ var myObject = makerFactory("travis", 45);
 console.log(myObject); // {age: 45, name: "travis"}
 ```
 
-### Object Augmentation
+### object creation in ES5
 
-* You can add new stuff to an existing object at any time (no need to define a new class)
-
-```javascript
-var myObject = { name: 'travis', age: 45 };
-myObject.personality = 'weird';
-myObject["color"] = 'white';
-console.log(myObject); // {age: 45, color: "white", name: "travis", personality: "weird"}
-```
-
-### Linkage
-
-* When objects are created, they are done so with a secret link to another object (this is how inheritance is achieved)
-* If an attempt to access a name fails, the secret link object will be used
-* The secret link is not used when storing (new members are only added to the primar object);
-* All objects are descended from Object; they inherit methods and properties from Object.prototype
-* The Object.create(o) Creates a new object with the specified prototype object and properties.
-	* All objects are linked directly or indirectly to Object.prototype
+* object literal (only 1 copy)
+* constructor pattern:  function constructor using ** new ** operator
+	* IMPORTANT:  use prototype for methods because including in constructor would reproduce method for all instances
 	
 ```javascript
-var myOldObject = { name: 'travis', age: 45 };
+// EXAMPLE 1:
+function Blah(name) { this.name = name; }
+var newBlah = new Blah(name);
 
-//myNewobject links to myOldObject; i.e. myObject inherits from myOldObject
-var myNewObject = Object.create(myOldObject);
-console.log(myOldObject); // {age: 45, name: "travis"}
-console.log(myNewObject); // {age: 45, name: "travis"}
-
-myNewObject.name = 'bob';
-myNewObject.address = 'some address';
-myOldObject.blah = 5;
-console.log(myOldObject); // {age: 45, blah: 5, name: "travis"}
-console.log(myNewObject); // {address: "some address", age: 45, blah: 5, name: "bob"}
-
-delete myNewObject["name"];
-console.log(myOldObject); // {age: 45, blah: 5}
-console.log(myNewObject); // {address: "some address", age: 45, blah: 5, name: "travis"}
-
-delete myOldObject["name"];
-console.log(myOldObject); // {age: 45, blah: 5}
-console.log(myNewObject); // {address: "some address", age: 45, blah: 5}
-
-myOldObject = undefined;
-console.log(myOldObject); // undefined
-console.log(myNewObject); // {address: "some address", age: 45, blah: 5}
-```
-
-### Douglas Crockford object inheritance method
-
-```javascript
-function object(o) {
-	function F() {}
-	F.prototype = o;
-	return new F();
-}
-```
-
-### The (global) Object
-
-* it doesn’t have a name
-* it is the container for all global variables and all built-in objects
-* Sometimes the this pointer points to it (var global = this;)
-* on browsers, window is the global object
-* (i.e. assigned to the global object a window member whose value is the global object)
-* global variables are evil
-* use of global namespace has to be minimized
-* Any var which is not properly declared is assumed to be global by default
-* JSLint is a JS Compiler written in JavaScript which helps identify implied globals and other weaknesses
-* Build your own namespaces
-
-## JavaCcript Object Creation Patterns (4 ways)
-
-### 1. Constructor Pattern​
-
-```javascript
+// EXAMPLE 2:
 var peopleConstructor = function(name, age, state) {
    this.name = name;
    this.age = age;
@@ -340,8 +439,8 @@ var john = new peopleConstructor('john', 22, 'CA');
 travis.display();
 john.display();
 ```
-    ​
-### 2. factory pattern
+
+* factory pattern - uses function expressions
 
 ```javascript
 // option 1: use property setters on object
@@ -407,7 +506,7 @@ travis.display();
 john.display();
 ```
 
-### 3. prototype pattern
+* strict prototype pattern (variables and methods are on prototype)
 
 ```javascript
 // Object has prototype and instances will share things created on it
@@ -428,7 +527,7 @@ travis.display();
 john.display();
 ```
 
-### 4. dynamic prototype pattern
+* dynamic prototype pattern
 
 ```javascript
 var peopleDynamicProto = function(name, age, state) {
@@ -448,6 +547,134 @@ var peopleDynamicProto = function(name, age, state) {
 var travis = new peopleProto('travis', 45, 'MD');
 var john = new peopleProto('john', 22, 'CA');
 ```
+
+* Object.create() 
+
+```javascript
+var newObject = Object.create(
+	prototypeToUse, 
+	{ name: { value: 'Jane', configurable: true, enumerable: true, writable: false }} // 2nd param is object descriptor map
+); 
+```
+
+* new Object(); // this one isn't used that often, but it creates an empty Javascript Object (i.e. {})
+
+### object creation in ES6+
+
+* classes - they are basically syntactic sugar and mostly work the same as in javascript
+* supports inheritance; can only extend one class; super must be first line in constructor 
+* constructor is called constructor
+* instanceof operator exists and can be used with DOM elements as well
+* private variables exist, but this is a very new feature; prepend with #
+* for the most part, the "this" pointer refers to the object, but again, depends on how it's called	
+	* e.g. if an event listener is added to a method, it's this will be for that element (e.g. button)
+		* one way to avoid that is to use an arrow function
+		* another way is to use bind()
+* constructor function versus classes
+	* CF: all properties and methods are enumerable by default (i.e. can be used with for (const key in object) {}
+	* classes: methods aree non-enumerable by default
+	* classes always use strict mode whereas CF do not by default
+* functions inside a class are called methods and are declared without the function keyword
+	* they are added to the prototype of the object (every instance shares a copy)
+	* alternatively, you can create a property and assign it a function 
+		*  every instance will have it's own copy of the function
+		*  one use case for this is to use the arrow function for a function that will be used as a event handlers (it will use "this" of object)
+* using destructuring to create an object
+
+```javascript
+const { value0, value1, ...otherValues } = object;
+```
+
+* getter/setter (same for classes)
+
+```javascript
+const language = {
+  get current() { return this.name; }
+  set current(name) { this.name = name; }
+}
+language.current = 'EN';
+console.log(language.current);	
+```
+
+* private variables in classes (not quite supported yet): #varName
+* can delete a property using the ** delete ** operator:  delete object.propertyName
+
+### Object Augmentation
+
+* You can add new stuff to an existing object at any time (no need to define a new class)
+
+```javascript
+var myObject = { name: 'travis', age: 45 };
+myObject.personality = 'weird';
+myObject["color"] = 'white';
+console.log(myObject); // {age: 45, color: "white", name: "travis", personality: "weird"}
+```
+
+### Object Linkage
+
+* When objects are created, they are done so with a secret link to another object (this is how inheritance is achieved)
+* If an attempt to access a name fails, the secret link object will be used
+* The secret link is not used when storing (new members are only added to the primar object);
+* All objects are descended from Object; they inherit methods and properties from Object.prototype
+* The Object.create(o) Creates a new object with the specified prototype object and properties.
+	* All objects are linked directly or indirectly to Object.prototype
+	
+```javascript
+var myOldObject = { name: 'travis', age: 45 };
+
+//myNewobject links to myOldObject; i.e. myObject inherits from myOldObject
+var myNewObject = Object.create(myOldObject);
+console.log(myOldObject); // {age: 45, name: "travis"}
+console.log(myNewObject); // {age: 45, name: "travis"}
+
+myNewObject.name = 'bob';
+myNewObject.address = 'some address';
+myOldObject.blah = 5;
+console.log(myOldObject); // {age: 45, blah: 5, name: "travis"}
+console.log(myNewObject); // {address: "some address", age: 45, blah: 5, name: "bob"}
+
+delete myNewObject["name"];
+console.log(myOldObject); // {age: 45, blah: 5}
+console.log(myNewObject); // {address: "some address", age: 45, blah: 5, name: "travis"}
+
+delete myOldObject["name"];
+console.log(myOldObject); // {age: 45, blah: 5}
+console.log(myNewObject); // {address: "some address", age: 45, blah: 5}
+
+myOldObject = undefined;
+console.log(myOldObject); // undefined
+console.log(myNewObject); // {address: "some address", age: 45, blah: 5}
+```
+
+### Douglas Crockford object inheritance method
+
+```javascript
+function object(o) {
+	function F() {}
+	F.prototype = o;
+	return new F();
+}
+```
+
+### The (global) Object
+
+* it doesn’t have a name
+* it is the container for all global variables and all built-in objects
+* Sometimes the this pointer points to it (var global = this;)
+* on browsers, window is the global object
+* (i.e. assigned to the global object a window member whose value is the global object)
+* global variables are evil
+* use of global namespace has to be minimized
+* Any var which is not properly declared is assumed to be global by default
+* JSLint is a JS Compiler written in JavaScript which helps identify implied globals and other weaknesses
+* Build your own namespaces
+* the global Object has a bunch of static methods; the same can be added to your function constructors
+
+```javascript
+\\ it will not add that function to an instantiation of the Person object 
+\\ instead, it adds it to the function constructor (i.e. the function object itself)
+Person.someFunction = function() {}
+```	
 
 ## Prototype:  Augmenting Built-in Types by adding to prototype - it will apply to all instances of that type
 
@@ -605,6 +832,28 @@ for (var name in person) {
 //age=45
 //address=null
 ```
+
+### If statements
+
+#### coercion
+
+* applies to boolean expressions; when using ==, javascript will try to coerce the data type of one of the sides to get them to match
+* use === or !== to avoid coercion issues (it enforces type and value comparison)
+	
+#### falsy values
+
+* you can have boolean expressions with a single non-boolean value; javascript will use coercion to turn it into boolean
+* there are 7 falsy values; everything else is treated as true
+
+| Type | Value |
+| ---- | ---- | 
+| Boolean | false |
+| Number | 0 |
+| Number | NaN |
+| BigInt | 0n |
+| String | "" or '' or `` |
+| Object | null |
+| undefined | undefined |
 
 ### switch statements
 
@@ -920,167 +1169,12 @@ sam.move();
 tom.move(34);
 ```
 
-## JavaScript Versions and Features
 
-### ES5	(2009) 
 
-* most modern browsers support this standard at a minimum
-				
-### ES6 / ECMAScript2015	
 
-| Feature |	
-| ---- |
-| arrow functions |
-| classes |
-| enhanced object literals |
-| template strings |
-| destructuring |
-| default + rest + spread |
-| let + const |
-| iterators + for..of |
-| generators |
-| unicode |
-| modules |
-| module loaders |
-| map + set + weakmap + weakset |
-| proxies |
-| symbols |
-| subclassable built-ins |
-| promises |
-| math + number + string + array + object APIs |
-| binary and octal literals |
-| reflect api |
-| tail calls |
 
-### ES7 / ECMAScript2016	
 
-| Feature |	
-| ---- |	
-| Array.prototype.includes |
-| Exponentiation Operator |
 
-### ES8 / ECMAScript2017	
-
-| Feature |	
-| ---- |	
-| Async functions (Async / Await) |
-| Object.entries |
-| Object.values |
-| Object.getOwnPropertyDescriptors |
-| Trailing commas |
-
-### ES9 / ECMAScript2018	
-
-| Feature |	
-| ---- |
-| Async iterators |
-| Object rest properties |
-| Object spread properties |
-| Promise.prototype.finally |
-
-### ES10 / ECMAScript2019		
-
-| Feature |	
-| ---- |			
-| Array.prototype.{flat,flatMap} |
-| Object.fromEntries |
-| String.prototype.{trimStart,trimEnd} |
-| Symbol.prototype.description |
-| Optional catch binding |
-
-## ES5 (and javascript in general) 
-
-### primitives
-	* Numbers, String, Booleans, Undefined, Null
-		o unary plus on numbers is fast way to convert a string to a number (similar to parseInt or parseFloat when decimals are in the number)
-			+'2e3' === 2000; but parseInt('2e3',10) === 2;
-			+'0xf' === 15; but parseInt("0xf", 10) === 0;
-	* assigning primitives are copies of the value (var a=5; b=a; // b will be a copy of a and changing a will not reflect in b); references are copies of the pointer
-	* Date
-		-- const date = new Date();
-		-- date.getDay() // etc.
-		-- date.getTime() // gives epoch since 1970
-		-- const date = new Date(dateObject);
-		-- const date = new Date('07/11/19');
-		-- date - date2 = differenceTimeInMillis
-### coercion
-	* applies to boolean expressions; when using ==, javascript will try to coerce the data type of one of the sides to get them to match
-	* use === or !== to avoid coercion	
-### falsy values
-	* you can have boolean expressions with a single non-boolean value; javascript will use coercion to turn it into boolean
-	* there are 7 falsy values; everything else is treated as true
-		--  false, 0 (number), 0n (BigInt), "" or '' or ``, null, undefined, NaN (number)	
-### object creation in ES5
-	* object literal (only 1 copy)
-	* function constructor
-		-- use prototype for methods because including in constructor would reproduce method for all instances
-		-- function Blah(name) { this.name = name; }
-		   var newBlah = new Blah(name);
-	* var newObject = Object.create(prototypeToUse, { name: { value: 'Jane', configurable: true, enumerable: true, writable: false }}); // 2nd param is object descriptor map
-	* new Object(); // this one isn't used that often, but it creates an empty {}
-### object creation in ES6+
-	* classes - they are basically syntactic sugar and mostly work the same as in javascript
-	* supports inheritance; can only extend one class; super must be first line in constructor 
-	* constructor is called constructor
-	* instanceof operator exists and can be used with DOM elements as well
-	* private variables exist, but this is a very new feature; prepend with #
-	* for the most part, the "this" pointer refers to the object, but again, depends on how it's called	
-		- e.g. if an event listener is added to a method, it's this will be for that element (e.g. button)
-			o one way to avoid that is to use an arrow function
-			o another way is to use bind()
-	* constructor function versus classes
-		-- CF: all properties and methods are enumerable by default (i.e. can be used with for (const key in object) {}
-		-- classes: methods aree non-enumerable by default
-		-- classes always use strict mode whereas CF do not by default
-	* functions inside a class are called methods and are declared without the function keyword
-		-- they are added to the prototype of the object (every instance shares a copy)
-		-- alternatively, you can create a property and assign it a function 
-			+ every instance will have it's own copy of the function
-			+ one use case for this is to use the arrow function for a function that will be used as a event handlers (it will use "this" of object)
-### objects
-	* ways to loop through object properties
-		-- for (const key in object) 
-			o The problem with a for...in loop is that it iterates through properties in the Prototype chain. 
-			  When you loop through an object with the for...in loop, you need to check if the property belongs to the object. 
-				for (var property in object) {
-					if (object.hasOwnProperty(property)) {
-						// Do things here
-					}
-				}
-		-- better way to loop through objects is first to convert the object into an array; some techniques to convert to array
-			o Object.keys(), Object.values(), Object.entries()
-	* can put a variable without a value, a number, a square bracket: const blah = { someVar1, [someVar2]: "someValue", 1.5: "someValue" };
-	* copy an object:
-		-- const returnedTarget = Object.assign(target, source);
-			o Object.assign({}, existingObject);
-		-- use the spread operator: const blah = { ...blah1 };
-		-- JSON.parse(JSON.stringify(object));
-	* property existence
-		-- if ('propertyName' in object) {}
-		-- if (object.hasOwnProperty(property)) {}
-		-- if (object.property === undefined) {}
-	* destructuring: const { value0, value1, ...otherValues } = object;
-	* getter/setter (same for classes)
-		const language = {
-		  get current() { return this.name; }
-		  set current(name) { this.name = name; }
-		}
-		language.current = 'EN';
-		console.log(language.current);	
-	* private variables in classes (not quite supported): #varName
-	* object descriptors
-		-- Object.getOwnPropertyDescriptor(object, "key")
-		-- Object.getOwnPropertyDescriptors(object)
-			configurable - you can delete it
-			enumerable - appears in for in loop (e.g. for (key in object) {}
-			writable - you can update it
-		-- Object.defineProperty(object, 'propertyName', { writable: false }); // every value you don't set gets set to false
-	* delete a property:  delete object.propertyName
-	* all objects inherit from Object; this is sometimes called the "global" Object
-	* the global Object has a bunch of static methods; the same can be added to your function constructors
-		o Person.someFunction = function() {}
-			-- it will not add that function to an instantiation of the Person object 
-			-- instead, it adds it to the function constructor (i.e. the function object itself)
 ### prototype
 	* is an Object itself
 	* whenever you create an object, it gets a default prototype (e.g. Object.prototype; Person.prototype)
