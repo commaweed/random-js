@@ -242,6 +242,13 @@ console.log(myArray instanceof Array);  //true
 ## Functions
 
 * They are first-class objects and are the "heart" of javascript
+* functions are objects (inherit from the "global" Object as well)
+	* it also has a prototype (i.e. __proto__)
+	* it also has a special prototype property (called "prototype" in browser); it is related to using the "new" operator on a constructor
+		* it's the default object every constructor function get's assigned when instantiated
+		* it only exists with functions and is not considered a "fallback" object
+		* it is the same reference as the function's __proto__
+		* const p = new Person(); p.__proto__ === Person.prototype; // true
 * They can be passed, returned, and stored just like any other value
 * They inherit from Object and can store name/value pairs
 * The function operator: function optionalName(optionalParameters) { statements; }
@@ -257,7 +264,75 @@ console.log(myArray instanceof Array);  //true
 * When a function is stored in an object, we call it a method
 * if a function is called with too-few values, the other arguments are treated as undefined
 * functions have access to the arguments array-like object that represents a list of passed parameters (not real array)
+* all functions have an arguments variable; calling a function without declaring the parameters can still assign values to arguments	
+	* function blah () {}; blah("one", "two"); arguments[0] = "one", etc.
+* each function creates a scope
+	* lexical scoping - a function that is lexically within another function gets access to the scope of the outer function
 
+### two types
+
+#### function declaration or statement
+
+* A declared function is “saved for later use”, and will be executed later, when it is invoked (called).
+* they are hoisted
+
+```javascript
+// declaration statement - Declarations are loaded before any code can run (via hoisting)
+function foo() { return 5; }
+
+// invoking
+alert(foo()); // Alerts 5. 					
+```
+
+#### function expressions
+
+* A function expression can be stored in a variable:  var x = function (a, b) {return a * b};
+* After a function expression has been stored in a variable, the variable can be used as a function. 
+* Functions stored in variables do not need function names. 
+* They are always invoked (called) using the variable name. 
+* function name can be omitted in function expressions to create anonymous functions (but not function declarations) - see IIFE below
+* benefits:    
+	* As closures
+	* As arguments to other functions
+	* As Immediately Invoked Function Expressions (IIFE)
+* function expressions are not hoisted, which allows them to retain a copy of the local variables from the scope where they were defined.
+
+```javascript
+alert(foo()); // ERROR! foo wasn't loaded yet
+var foo = function() { return 5; }
+```
+		
+* IIFE - Immediately Invoked Function Expression - runs as soon as it is defined (immediately invoked)
+
+```javascript
+(function() { ... })();    
+```
+
+### closure
+
+* functions in JavaScript form closures
+* Closures are useful because they let you associate data (the lexical environment) with a function that operates on that data.
+ 
+```text
+  This has obvious parallels to object-oriented programming, where objects allow you to associate data (the object's properties) with one or more methods.	
+```
+
+* A closure is the combination of a function bundled together (enclosed) with references to its surrounding state (the lexical environment). 
+* gives you access to an outer function’s scope from an inner function
+	* that is, inner functions have access to the variables of outer functions
+* they are created every time a function is created, at function creation time.	
+
+```javascript
+	function init() {
+	  var name = 'Mozilla'; // name is a local variable created by init
+	  function displayName() { // displayName() is the inner function, a closure
+		alert(name); // use variable declared in the parent function
+	  }
+	  displayName();
+	}
+	init();	
+```
+	
 ### 5 ways to call a function
 
 1.  Function Form: myFunction(arguments);
@@ -285,6 +360,68 @@ console.log(newObject.sayHello());
 
 4.  Apply Form: myFunctionObject.apply(thisObject, [ arrayArguments ]);
 5.  Call Form: myFunction.call(thisObject, arguments);
+
+### ** this ** pointer with functions
+
+* in general, the "this" refers to whatever is responsible for executing the function (but there are exceptions)
+* in a regular function call, it points to the global object (window in the browser)
+	* when a function is called within a method, it will point to the global object, even from within an IIFE
+* in a method call, it points to the object that is calling the method
+* in event handler functions, the browser binds it to the DOM element that triggered the event (i.e. event.target)
+* in a function in an IEFE, "this" refers to the wrapper function
+
+```javascript
+	var help = (function() {
+	  var test = function() {
+		console.dir(this);
+	  };
+	  return {
+		test: test
+	  }
+	})();
+	help.test(); // [object Object] { test: function() { window.runnerWindow.proxyConsole.dir(this); }}		
+```
+	
+* arrow functions are an exception to the cases above
+	* they don't bind "this" to anything; "this" refers to the "this" that is outside the arrow function
+* inside a constructor of a class, it refers to the object being created
+
+### function and variable hoisting
+
+* works for variables declared with var and function declarations (but not function expressions)
+	* variables are stored in execution context and initialized to undefined
+	* function declarations are also stored in the execution context; this is why you can call the function before using it
+	* function declaration (DOES HOIST): function() { ... } 
+	* function expression (DOES NOT HOIST):  var someFunc = function() { ... };	
+			
+### bind, call, and apply (special internal functions)
+
+* often used to control ** this ** reference
+* call()
+	* called immediately	
+* apply() 
+	* called immediately
+	* allows you to pass additional arguments as an array
+* bind() 
+	* returns a new function 
+	* not called immediately; requires separate invoke statement
+	* can be used to bind parameters
+	
+### execution call stack, web API, task/event queue, event loop
+
+* javascript engine is single-threaded; there is only one execution call stack
+* tasks on the task/event queue will not get executed until the execution call stack is empty
+* setTimeout, ajax, etc. are executed by other web APIs and this is why they are async
+	* callback is placed on task/event queue once web API process returns
+	* it won't get executed until execution call stack is empty 
+		* this is why setTimeout for an amount of time is not definite 
+		* it will try to run it at the time indicated, but must wait on call stack
+* the event loop will watch the task/event queue (aka callback queue) for callbacks from web APIs or from event driven callbacks
+* browser wants to repaint the screen like 60 frames a second for example
+	* it is constrained by javascript; it cannot do a render if their is code on the execution call stack (render behaves like a high priority callback)
+	* renderer is giving a higher priority than our callbacks that are on the task/event queue 	
+	* you can use a debounce() to prevent things that are event intensive (e.g. scroll events) from continually pushing things to the task/event queue (which will block rendering)
+	* often referred to as "don't block the event loop" or "keep the call stack empty as much as possible
 
 ## Objects
 
@@ -351,17 +488,26 @@ if (object.hasOwnProperty(property)) {}
 if (object.property === undefined) {}
 ```	
 
-### object descriptors
+### object descriptors - Object.getOwnPropertyDescriptor()
 
-* configurable - you can delete it
-* enumerable - appears in for in loop (e.g. for (key in object) {}
-* writable - you can update it
+* returns a property descriptor that is directly present on an object and not in the object's prototype chain
+* attributes
+	* boolean configurable - can you delete it
+	* boolean enumerable - should it appear in for in loop (e.g. for (key in object) {})
+	* boolean writable - can you update it
+	* function get - the function that acts as the getter
+	* function set - the function that acts as the setter
 
 ```javascript
-Object.getOwnPropertyDescriptor(object, "key");
+// single descriptor
+const description = Object.getOwnPropertyDescriptor(object, "propertyName");
+console.log(description.configurable) // boolean
+console.log(description.value)
 
+// all descriptors
 Object.getOwnPropertyDescriptors(object);
 
+// can cause a properties to have certain properties set
 Object.defineProperty(object, 'propertyName', { writable: false }); // every value you don't set gets set to false
 ```
 
@@ -678,13 +824,14 @@ Person.someFunction = function() {}
 
 ## Prototype:  Augmenting Built-in Types by adding to prototype - it will apply to all instances of that type
 
-* Object.prototype
-* Array.prototype
-* Function.prototype
-* Number.prototype
-* String.prototype
-* Boolean.prototype
-
+* is an Object itself
+	* Object.prototype
+	* Array.prototype
+	* Function.prototype
+	* Number.prototype
+	* String.prototype
+	* Boolean.prototype
+	
 ```javascript
 var  someString = "abcd";
 console.log(someString); // abcd
@@ -695,7 +842,36 @@ String.prototype.addFavDay = function() {
 
 console.log(someString.addFavDay()); // abcd (Friday!!!)
 console.log("xyz".addFavDay());  // xyz (Friday!!!)
-```
+```	
+
+* whenever you create an object, it gets a default prototype (e.g. Object.prototype; Person.prototype)
+	* when using "new FunctionConstructor()", the prototype is assigned to the instance upon creation
+	* every object has a prototype and it is how javascript shares code
+	* you can think of prototypes as "fallback objects"; if it cannot find a function, it will look up the chain for a prototype that might have the function
+		*  this is how ES5 did inheritance
+	* all objects inherit from Object, which also has a prototype
+		* if you call personObject.someMethod(), if not in personObject
+			* it will look in personObject's prototype object (i.e. personObject.__proto__), and if not there
+			* it will look in Object's prototype (i.e. personObject.__proto__.__proto__), and if not there
+			* throws an error
+		* this is known as the prototype chain
+	* the browser will use the __proto__ for the object's prototype (not meant to be used by programmers)
+		* it is present on every object
+* ways to assign functions to prototypes (properties behave similarly)
+
+```javascript
+// will add this function to the Person's prototype object (i.e. {})
+Person.prototype.functionName = function() {}; 
+
+// this will replace the prototype object and so a function constructor will lose the constructor() method (DON'T DO IT THIS WAY)
+// one way to create a new object using prototype is:  const p2 = new p.__proto__.constructor(); (demonstrational of function constructor low-level)
+Person.prototype = { functionName() {} }; // can be used to assign many things at once to a prototype (because it is an object)
+```		
+
+* the fallback of all objects is eventually Object.prototype (not Object and not Object.prototype.__proto__)
+* setting and getting prototype (official way)
+	* Object.getPrototypeOf(object)
+	* Object.setPrototypeOf(object, prototypeToUse)
 
 ### Prototypal Inheritance
 
@@ -932,8 +1108,10 @@ with (o) {
 
 ### Threads
 
-* Threads are evil - language definition is neutral on threads
+* the JavaScript engine is single-threaded
+* the say: "Threads are evil" - so language definition is neutral on threads
 * most application environments (like browsers) do not provide it
+* browsers can simulate multiple threads using the browsers "web API" to execute certain tasks 
 
 ### Example of a memoize function
 
@@ -1175,123 +1353,7 @@ tom.move(34);
 
 
 
-### prototype
-	* is an Object itself
-	* whenever you create an object, it gets a default prototype (e.g. Object.prototype; Person.prototype)
-		-- when using "new FunctionConstructor()", the prototype is assigned to the instance upon creation
-		-- every object has a prototype and it is how javascript shares code
-		-- you can think of prototypes as "fallback objects"; if it cannot find a function, it will look up the chain for a prototype that might have the function
-			o this is how ES5 did inheritance
-		-- all objects inherit from Object, which also has a prototype
-			o if you call personObject.someMethod(), if not in personObject
-				+ it will look in personObject's prototype object (i.e. personObject.__proto__), and if not there
-				+ it will look in Object's prototype (i.e. personObject.__proto__.__proto__), and if not there
-				+ throws an error
-			o this is known as the prototype chain
-		-- the browser will use the __proto__ for the object's prototype (not meant to be used by programmers)
-			o it is present on every object
-	* ways to assign functions to prototypes (properties behave similarly)
-		-- Person.prototype.functionName = function() {}; // will add this function to the Person's prototype object (i.e. {})
-		-- Person.prototype = { functionName() {} }; // can be used to assign many things at once to a prototype (because it is an object)
-			o this will replace the prototype object and so a function constructor will lose the constructor() method (DON'T DO IT THIS WAY)
-			o one way to create a new object using prototype is:  const p2 = new p.__proto__.constructor(); (demonstrational of function constructor low-level)
-	* the fallback of all objects is eventually Object.prototype (not Object and not Object.prototype.__proto__)
-	* setting and getting prototype (official way)
-		-- Object.getPrototypeOf(object)
-		-- Object.setPrototypeOf(object, prototypeToUse)
-### this pointer
-	* in general, the "this" refers to whatever is responsible for executing the function (but there are exceptions)
-	* in a regular function call, it points to the global object (window in the browser)
-		o when a function is called within a method, it will point to the global object, even from within an IIFE
-	* in a method call, it points to the object that is calling the method
-	* in event handler functions, the browser binds it to the DOM element that triggered the event (i.e. event.target)
-	* in a function in an IEFE, "this" refers to the wrapper function
-		var help = (function() {
-		  var test = function() {
-			console.dir(this);
-		  };
-		  return {
-			test: test
-		  }
-		})();
-		help.test(); // [object Object] { test: function() { window.runnerWindow.proxyConsole.dir(this); }}				
-	* arrow functions are an exception to the cases above
-		o they don't bind "this" to anything; "this" refers to the "this" that is outside the arrow function
-	* inside a constructor of a class, it refers to the object being created
-### hoisting
-	* works for variables declared with var and function declarations (but not function expressions)
-		-- variables are stored in execution context and initialized to undefined
-		-- function declarations are also stored in the execution context; this is why you can call the function before using it
-		-- function declaration (DOES HOIST): function() { ... } 
-		-- function expression (DOES NOT HOIST):  var someFunc = function() { ... };		
-### function
-	* all functions have an arguments variable; calling a function without declaring the parameters can still assign values to arguments	
-		-- function blah () {}; blah("one", "two"); arguments[0] = "one", etc.
-	* each function creates a scope
-		-- lexical scoping - a function that is lexically within another function gets access to the scope of the outer function
-	* function declaration or statement
-	        -- A declared function is “saved for later use”, and will be executed later, when it is invoked (called).
-		-- function blah () {}; 
-		-- they are hoisted
-			alert(foo()); // Alerts 5. Declarations are loaded before any code can run.
-                        function foo() { return 5; }
-	* function expression
-	        -- A function expression can be stored in a variable:  var x = function (a, b) {return a * b};
-		-- After a function expression has been stored in a variable, the variable can be used as a function. 
-		-- Functions stored in variables do not need function names. 
-		-- They are always invoked (called) using the variable name. 
-		-- function name can be omitted in function expressions to create anonymous functions (but not function declarations) - see IIFE below
-		-- function expressions are not hoisted, which allows them to retain a copy of the local variables from the scope where they were defined.
-			alert(foo()); // ERROR! foo wasn't loaded yet
-			var foo = function() { return 5; }
-		-- benefits:    
-			o As closures
-			o As arguments to other functions
-			o As Immediately Invoked Function Expressions (IIFE)
-	* IIFE - Immediately Invoked Function Expression - runs as soon as it is defined (immediately invoked)
-		-- (function() { ... })();        
-	* functions are objects (inherit from the "global" Object as well)
-		-- it also has a prototype (i.e. __proto__)
-		-- it also has a special prototype property (called "prototype" in browser); it is related to using the "new" operator on a constructor
-			o it's the default object every constructor function get's assigned when instantiated
-			o it only exists with functions and is not considered a "fallback" object
-			o it is the same reference as the function's __proto__
-			o const p = new Person(); p.__proto__ === Person.prototype; // true
-### closure
-	* functions in JavaScript form closures
-	* A closure is the combination of a function bundled together (enclosed) with references to its surrounding state (the lexical environment). 
-	* gives you access to an outer function’s scope from an inner function
-		o that is, inner functions have access to the variables of outer functions
-	* they are created every time a function is created, at function creation time.	
-		function init() {
-		  var name = 'Mozilla'; // name is a local variable created by init
-		  function displayName() { // displayName() is the inner function, a closure
-			alert(name); // use variable declared in the parent function
-		  }
-		  displayName();
-		}
-		init();	
-	* Closures are useful because they let you associate data (the lexical environment) with a function that operates on that data. 
-	  This has obvious parallels to object-oriented programming, where objects allow you to associate data (the object's properties) 
-	  with one or more methods.			
-### bind, call, and apply
-	* often used to control "this" reference
-	* call() and apply() are called immediately; bind returns a new function 
-		o apply allows you to pass additional arguments as an array
-	* bind() can be used to bind parameters
-### execution call stack, web API, task/event queue, event loop
-	* javascript engine is single-threaded; there is only one execution call stack
-	* tasks on the task/event queue will not get executed until the execution call stack is empty
-	* setTimeout, ajax, etc. are executed by other web APIs and this is why they are async
-		-- callback is placed on task/event queue once web API process returns
-		-- it won't get executed until execution call stack is empty 
-			(this is why setTimeout for an amount of time is not definite (it will try to run it at the time indicated, but must wait on call stack)
-	* the event loop will watch the task/event queue (aka callback queue) for callbacks from web APIs or from event driven callbacks
-	* browser wants to repaint the screen like 60 frames a second for example
-		-- it is constrained by javascript; it cannot do a render if their is code on the execution call stack (render behaves like a high priority callback)
-		-- renderer is giving a higher priority than our callbacks that are on the task/event queue 	
-		-- you can use a debounce() to prevent things that are event intensive (e.g. scroll events) from continually pushing things to the task/event queue (which will block rendering)
-		-- often referred to as "don't block the event loop" or "keep the call stack empty as much as possible
+
 ### arrays 
 	* iteratable:  objects that implement "iterable" protocol and have an @@iterator method (i.e. Symbol.iterator); basically can do "for-of" on it
 		o NodeList, String, Map, Set
