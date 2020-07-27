@@ -1,4 +1,4 @@
-# JavaScript - the basics (well some of them - Douglas Crockford)
+# JavaScript - (notes from Douglas Crockford book, udemy classes, online resources)
 
 ## Only has 6 types of values
 
@@ -297,9 +297,9 @@ console.log(myNewObject); // {address: "some address", age: 45, blah: 5}
 
 ```javascript
 function object(o) {
-function F() {}
-F.prototype = o;
-return new F();
+	function F() {}
+	F.prototype = o;
+	return new F();
 }
 ```
 
@@ -495,8 +495,8 @@ var parent = object(grandParent);
 parent.three = function() { return 3; };
 
 var child = object(parent);
-console.log(child.one());         // 1
-console.log(child.two());         // 2
+console.log(child.one());       // 1
+console.log(child.two());       // 2
 console.log(child.three());     // 3
 ```
 
@@ -920,53 +920,73 @@ sam.move();
 tom.move(34);
 ```
 
-# Other notes on JavaScript
+## JavaScript Versions and Features
 
-## Versions and Features
+### ES5	(2009) 
 
-### ES5	(2009)					
-### ES6/ECMAScript2015		
-	arrow functions
-    classes
-    enhanced object literals
-    template strings
-    destructuring
-    default + rest + spread
-    let + const
-    iterators + for..of
-    generators
-    unicode
-    modules
-    module loaders
-    map + set + weakmap + weakset
-    proxies
-    symbols
-    subclassable built-ins
-    promises
-    math + number + string + array + object APIs
-    binary and octal literals
-    reflect api
-    tail calls
-### ES7/ECMAScript2016		
-    Array.prototype.includes
-    Exponentiation Operator
-### ES8/ECMAScript2017		
-    Async functions (Async / Await)
-    Object.entries
-    Object.values
-    Object.getOwnPropertyDescriptors
-    Trailing commas
-### ES9/ECMAScript2018	
-    Async iterators
-    Object rest properties
-    Object spread properties
-    Promise.prototype.finally
-### ES10/ECMAScript2019					
-	Array.prototype.{flat,flatMap}
-	Object.fromEntries
-	String.prototype.{trimStart,trimEnd}
-	Symbol.prototype.description
-	Optional catch binding
+* most modern browsers support this standard at a minimum
+				
+### ES6 / ECMAScript2015	
+
+| Feature |	
+| ---- |
+| arrow functions |
+| classes |
+| enhanced object literals |
+| template strings |
+| destructuring |
+| default + rest + spread |
+| let + const |
+| iterators + for..of |
+| generators |
+| unicode |
+| modules |
+| module loaders |
+| map + set + weakmap + weakset |
+| proxies |
+| symbols |
+| subclassable built-ins |
+| promises |
+| math + number + string + array + object APIs |
+| binary and octal literals |
+| reflect api |
+| tail calls |
+
+### ES7 / ECMAScript2016	
+
+| Feature |	
+| ---- |	
+| Array.prototype.includes |
+| Exponentiation Operator |
+
+### ES8 / ECMAScript2017	
+
+| Feature |	
+| ---- |	
+| Async functions (Async / Await) |
+| Object.entries |
+| Object.values |
+| Object.getOwnPropertyDescriptors |
+| Trailing commas |
+
+### ES9 / ECMAScript2018	
+
+| Feature |	
+| ---- |
+| Async iterators |
+| Object rest properties |
+| Object spread properties |
+| Promise.prototype.finally |
+
+### ES10 / ECMAScript2019		
+
+| Feature |	
+| ---- |			
+| Array.prototype.{flat,flatMap} |
+| Object.fromEntries |
+| String.prototype.{trimStart,trimEnd} |
+| Symbol.prototype.description |
+| Optional catch binding |
 
 ## ES5 (and javascript in general) 
 
